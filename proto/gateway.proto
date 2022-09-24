@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option go_package = "github.com/mpiorowski/golang/proto";
+option java_multiple_files = true;
+option java_package = "io.grpc.examples.helloworld";
+option java_outer_classname = "HelloWorldProto";
+
+package proto;
+
+message GetUserSession {
+  string id = 1;
+  string userId = 2;
+	string created = 3;
+	string updated = 4;
+	string role = 5;
+	string expires = 6;
+}
