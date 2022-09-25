@@ -5,7 +5,7 @@ option java_multiple_files = true;
 option java_package = "io.grpc.homeit.proto";
 option java_outer_classname = "HomeItProto";
 
-package proto;
+package homeit;
 
 service FoodService {
   rpc GetSupplies (Empty) returns (Supplies) {}
