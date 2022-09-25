@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+option go_package = "github.com/mpiorowski/golang/homeit";
+option java_multiple_files = true;
+option java_package = "io.grpc.homeit.proto";
+option java_outer_classname = "HomeItProto";
+
+package proto;
+
+service FoodService {
+  rpc GetSupplies (Empty) returns (Supplies) {}
+}
+
+message Empty {
+
+}
+
+message Supplies {
+  repeated Supply supplies = 1;
+}
+
+message Supply {
+  string  id = 1;
+	string  created = 2;
+	string  updated = 3;
+
+	string  userId = 4;
+	string  name = 5;
+  int32   priority = 6;
+}
