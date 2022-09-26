@@ -9,6 +9,8 @@ package homeit;
 
 service FoodService {
   rpc GetSupplies (Empty) returns (Supplies) {}
+  rpc CreateSupply (Supply) returns (Supply) {}
+  rpc DeleteSupply (int32) returns (Supply) {}
 }
 
 message Empty {
