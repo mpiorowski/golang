@@ -10,11 +10,15 @@ package homeit;
 service FoodService {
   rpc GetSupplies (Empty) returns (Supplies) {}
   rpc CreateSupply (Supply) returns (Supply) {}
-  rpc DeleteSupply (int32) returns (Supply) {}
+  rpc DeleteSupply (SupplyId) returns (Supply) {}
 }
 
 message Empty {
 
+}
+
+message SupplyId {
+  string id = 1;
 }
 
 message Supplies {
