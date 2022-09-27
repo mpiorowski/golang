@@ -1,20 +1,54 @@
 syntax = "proto3";
 
-option go_package = "github.com/mpiorowski/golang/homeit";
-option java_multiple_files = true;
-option java_package = "io.grpc.homeit.proto";
-option java_outer_classname = "HomeItProto";
-
 package homeit;
 
-service FoodService {
-  rpc GetSupplies (Empty) returns (Supplies) {}
-  rpc CreateSupply (Supply) returns (Supply) {}
-  rpc DeleteSupply (SupplyId) returns (Supply) {}
+option go_package = "github.com/mpiorowski/golang/homeit";
+option java_multiple_files = true;
+option java_outer_classname = "HomeItProto";
+option java_package = "io.grpc.homeit.proto";
+
+message Empty {}
+
+service AuthService {
+  rpc Authenticate (Empty) returns (Session) {}
+  rpc Login (LoginRequest) returns (Session) {}
 }
 
-message Empty {
+message LoginRequest {
+  string email = 1;
+  string token = 2;
+}
 
+message Session {
+  string id = 1;
+  string created = 2;
+  string updated = 3;
+
+  string userId = 4;
+  string role = 6;
+  string expires = 7;
+}
+
+
+service UserService {
+  rpc GetUser(User) returns (User) {}
+}
+
+message User {
+  string id = 1;
+  string created = 2;
+  string updated = 3;
+
+  bool active = 4;
+  string email = 5;
+  string role = 6;
+  string lastLogin = 7;
+}
+
+service FoodService {
+  rpc GetSupplies(Empty) returns (Supplies) {}
+  rpc CreateSupply(Supply) returns (Supply) {}
+  rpc DeleteSupply(SupplyId) returns (Supply) {}
 }
 
 message SupplyId {
@@ -27,11 +61,11 @@ message Supplies {
 }
 
 message Supply {
-  string  id = 1;
-	string  created = 2;
-	string  updated = 3;
+  string id = 1;
+  string created = 2;
+  string updated = 3;
 
-	string  userId = 4;
-	string  name = 5;
-  int32   priority = 6;
+  string userId = 4;
+  string name = 5;
+  int32 priority = 6;
 }
