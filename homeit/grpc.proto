@@ -11,7 +11,7 @@ message Empty {}
 
 service UsersService {
   rpc CreateToken(TokenRequest) returns (Token) {}
-  rpc Login(LoginRequest) returns (Token) {}
+  rpc Login(LoginRequest) returns (LoginResponse) {}
 
   rpc GetUser(User) returns (User) {}
 }
@@ -22,7 +22,12 @@ message TokenRequest {
 
 message LoginRequest {
   string email = 1;
-  string token = 2;
+  string code = 2;
+}
+
+message LoginResponse {
+  string sessionId = 1;
+  string role = 2;
 }
 
 message Token {

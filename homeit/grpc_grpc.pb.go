@@ -23,7 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UsersServiceClient interface {
 	CreateToken(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*Token, error)
-	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*Token, error)
+	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	GetUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
 }
 
@@ -44,8 +44,8 @@ func (c *usersServiceClient) CreateToken(ctx context.Context, in *TokenRequest, 
 	return out, nil
 }
 
-func (c *usersServiceClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*Token, error) {
-	out := new(Token)
+func (c *usersServiceClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error) {
+	out := new(LoginResponse)
 	err := c.cc.Invoke(ctx, "/homeit.UsersService/Login", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -67,7 +67,7 @@ func (c *usersServiceClient) GetUser(ctx context.Context, in *User, opts ...grpc
 // for forward compatibility
 type UsersServiceServer interface {
 	CreateToken(context.Context, *TokenRequest) (*Token, error)
-	Login(context.Context, *LoginRequest) (*Token, error)
+	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	GetUser(context.Context, *User) (*User, error)
 	mustEmbedUnimplementedUsersServiceServer()
 }
@@ -79,7 +79,7 @@ type UnimplementedUsersServiceServer struct {
 func (UnimplementedUsersServiceServer) CreateToken(context.Context, *TokenRequest) (*Token, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateToken not implemented")
 }
-func (UnimplementedUsersServiceServer) Login(context.Context, *LoginRequest) (*Token, error) {
+func (UnimplementedUsersServiceServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
 func (UnimplementedUsersServiceServer) GetUser(context.Context, *User) (*User, error) {
