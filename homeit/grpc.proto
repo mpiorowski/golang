@@ -27,7 +27,8 @@ message LoginRequest {
 
 message LoginResponse {
   string sessionId = 1;
-  string role = 2;
+  string userId = 2;
+  string role = 3;
 }
 
 message Token {
