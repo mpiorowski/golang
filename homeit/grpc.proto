@@ -13,7 +13,8 @@ service UsersService {
   rpc CreateToken(TokenRequest) returns (Token) {}
   rpc Login(LoginRequest) returns (LoginResponse) {}
 
-  rpc GetUser(User) returns (User) {}
+  rpc CreateUser(User) returns (User) {}
+  rpc GetUsers(Empty) returns (stream User) {}
 }
 
 message TokenRequest {

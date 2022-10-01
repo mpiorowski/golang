@@ -24,7 +24,8 @@ const _ = grpc.SupportPackageIsVersion7
 type UsersServiceClient interface {
 	CreateToken(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*Token, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
-	GetUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
+	CreateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
+	GetUsers(ctx context.Context, in *Empty, opts ...grpc.CallOption) (UsersService_GetUsersClient, error)
 }
 
 type usersServiceClient struct {
@@ -53,13 +54,45 @@ func (c *usersServiceClient) Login(ctx context.Context, in *LoginRequest, opts .
 	return out, nil
 }
 
-func (c *usersServiceClient) GetUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error) {
+func (c *usersServiceClient) CreateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
-	err := c.cc.Invoke(ctx, "/homeit.UsersService/GetUser", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/homeit.UsersService/CreateUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
+}
+
+func (c *usersServiceClient) GetUsers(ctx context.Context, in *Empty, opts ...grpc.CallOption) (UsersService_GetUsersClient, error) {
+	stream, err := c.cc.NewStream(ctx, &UsersService_ServiceDesc.Streams[0], "/homeit.UsersService/GetUsers", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &usersServiceGetUsersClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type UsersService_GetUsersClient interface {
+	Recv() (*User, error)
+	grpc.ClientStream
+}
+
+type usersServiceGetUsersClient struct {
+	grpc.ClientStream
+}
+
+func (x *usersServiceGetUsersClient) Recv() (*User, error) {
+	m := new(User)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 // UsersServiceServer is the server API for UsersService service.
@@ -68,7 +101,8 @@ func (c *usersServiceClient) GetUser(ctx context.Context, in *User, opts ...grpc
 type UsersServiceServer interface {
 	CreateToken(context.Context, *TokenRequest) (*Token, error)
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
-	GetUser(context.Context, *User) (*User, error)
+	CreateUser(context.Context, *User) (*User, error)
+	GetUsers(*Empty, UsersService_GetUsersServer) error
 	mustEmbedUnimplementedUsersServiceServer()
 }
 
@@ -82,8 +116,11 @@ func (UnimplementedUsersServiceServer) CreateToken(context.Context, *TokenReques
 func (UnimplementedUsersServiceServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
-func (UnimplementedUsersServiceServer) GetUser(context.Context, *User) (*User, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
+func (UnimplementedUsersServiceServer) CreateUser(context.Context, *User) (*User, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
+}
+func (UnimplementedUsersServiceServer) GetUsers(*Empty, UsersService_GetUsersServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetUsers not implemented")
 }
 func (UnimplementedUsersServiceServer) mustEmbedUnimplementedUsersServiceServer() {}
 
@@ -134,22 +171,43 @@ func _UsersService_Login_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UsersService_GetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _UsersService_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(User)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UsersServiceServer).GetUser(ctx, in)
+		return srv.(UsersServiceServer).CreateUser(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/homeit.UsersService/GetUser",
+		FullMethod: "/homeit.UsersService/CreateUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UsersServiceServer).GetUser(ctx, req.(*User))
+		return srv.(UsersServiceServer).CreateUser(ctx, req.(*User))
 	}
 	return interceptor(ctx, in, info, handler)
+}
+
+func _UsersService_GetUsers_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(Empty)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(UsersServiceServer).GetUsers(m, &usersServiceGetUsersServer{stream})
+}
+
+type UsersService_GetUsersServer interface {
+	Send(*User) error
+	grpc.ServerStream
+}
+
+type usersServiceGetUsersServer struct {
+	grpc.ServerStream
+}
+
+func (x *usersServiceGetUsersServer) Send(m *User) error {
+	return x.ServerStream.SendMsg(m)
 }
 
 // UsersService_ServiceDesc is the grpc.ServiceDesc for UsersService service.
@@ -168,11 +226,17 @@ var UsersService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UsersService_Login_Handler,
 		},
 		{
-			MethodName: "GetUser",
-			Handler:    _UsersService_GetUser_Handler,
+			MethodName: "CreateUser",
+			Handler:    _UsersService_CreateUser_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "GetUsers",
+			Handler:       _UsersService_GetUsers_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "grpc.proto",
 }
 
