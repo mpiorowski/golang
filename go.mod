@@ -1,4 +1,4 @@
-module mpiorowski/go
+module github.com/mpiorowski/golang
 
 go 1.19
 
