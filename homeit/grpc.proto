@@ -8,6 +8,9 @@ option java_outer_classname = "HomeItProto";
 option java_package = "io.grpc.homeit.proto";
 
 message Empty {}
+message UserId {
+  string userId = 1;
+}
 
 service UsersService {
   rpc CreateToken(TokenRequest) returns (Token) {}
@@ -42,6 +45,11 @@ message Token {
   string expires = 6;
 }
 
+enum UserRole {
+  ROLE_USER = 0;
+  ROLE_ADMIN = 1;
+}
+
 message User {
   string id = 1;
   string created = 2;
@@ -49,8 +57,70 @@ message User {
 
   bool active = 4;
   string email = 5;
-  string role = 6;
+  UserRole role = 6;
   string lastLogin = 7;
+}
+
+service BillService {
+  rpc GetBills(UserId) returns (stream Bill) {}
+  rpc CreateBill(Bill) returns (Bill) {}
+  rpc DeleteBill(BillId) returns (Bill) {}
+}
+
+enum BillCategory {
+  HOUSE = 0;
+  WORK = 1;
+  COMPANY = 2;
+  OTHER = 3;
+  ACCOUNT = 4;
+  ADDITIONAL = 5;
+}
+enum BillFrequency {
+  MONTH = 0;
+  TWO_MONTHS = 1;
+  THREE_MONTHS = 2;
+  HALF_YEAR = 3;
+  YEAR = 4;
+  NONE = 5;
+}
+
+message BillId {
+  string billId = 1;
+}
+
+message Bill {
+  string id = 1;
+  string created = 2;
+  string updated = 3;
+
+  string userId = 4;
+
+  bool isPayed = 5;
+  string name = 6;
+  bool income = 7;
+  BillCategory category = 8;
+  BillFrequency frequency = 9;
+  bool qrCode = 10;
+
+  string defaultValue = 11;
+  string defaultAccountNumber = 12;
+  string defaultAccountReciever = 13;
+  string defaultAccountDescription = 14;
+}
+
+message Payments {
+  string id = 1;
+  string created = 2;
+  string updated = 3;
+
+  string userId = 4;
+  string billId = 5;
+
+  string value = 6;
+  string date = 7;
+  string accountNumber = 8;
+  string accountReciever = 9;
+  string accountDescription = 10;
 }
 
 service FoodService {

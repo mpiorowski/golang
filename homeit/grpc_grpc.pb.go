@@ -272,6 +272,192 @@ var UsersService_ServiceDesc = grpc.ServiceDesc{
 	Metadata: "grpc.proto",
 }
 
+// BillServiceClient is the client API for BillService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type BillServiceClient interface {
+	GetBills(ctx context.Context, in *UserId, opts ...grpc.CallOption) (BillService_GetBillsClient, error)
+	CreateBill(ctx context.Context, in *Bill, opts ...grpc.CallOption) (*Bill, error)
+	DeleteBill(ctx context.Context, in *BillId, opts ...grpc.CallOption) (*Bill, error)
+}
+
+type billServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewBillServiceClient(cc grpc.ClientConnInterface) BillServiceClient {
+	return &billServiceClient{cc}
+}
+
+func (c *billServiceClient) GetBills(ctx context.Context, in *UserId, opts ...grpc.CallOption) (BillService_GetBillsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &BillService_ServiceDesc.Streams[0], "/homeit.BillService/GetBills", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &billServiceGetBillsClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type BillService_GetBillsClient interface {
+	Recv() (*Bill, error)
+	grpc.ClientStream
+}
+
+type billServiceGetBillsClient struct {
+	grpc.ClientStream
+}
+
+func (x *billServiceGetBillsClient) Recv() (*Bill, error) {
+	m := new(Bill)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *billServiceClient) CreateBill(ctx context.Context, in *Bill, opts ...grpc.CallOption) (*Bill, error) {
+	out := new(Bill)
+	err := c.cc.Invoke(ctx, "/homeit.BillService/CreateBill", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *billServiceClient) DeleteBill(ctx context.Context, in *BillId, opts ...grpc.CallOption) (*Bill, error) {
+	out := new(Bill)
+	err := c.cc.Invoke(ctx, "/homeit.BillService/DeleteBill", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// BillServiceServer is the server API for BillService service.
+// All implementations must embed UnimplementedBillServiceServer
+// for forward compatibility
+type BillServiceServer interface {
+	GetBills(*UserId, BillService_GetBillsServer) error
+	CreateBill(context.Context, *Bill) (*Bill, error)
+	DeleteBill(context.Context, *BillId) (*Bill, error)
+	mustEmbedUnimplementedBillServiceServer()
+}
+
+// UnimplementedBillServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedBillServiceServer struct {
+}
+
+func (UnimplementedBillServiceServer) GetBills(*UserId, BillService_GetBillsServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetBills not implemented")
+}
+func (UnimplementedBillServiceServer) CreateBill(context.Context, *Bill) (*Bill, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateBill not implemented")
+}
+func (UnimplementedBillServiceServer) DeleteBill(context.Context, *BillId) (*Bill, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteBill not implemented")
+}
+func (UnimplementedBillServiceServer) mustEmbedUnimplementedBillServiceServer() {}
+
+// UnsafeBillServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to BillServiceServer will
+// result in compilation errors.
+type UnsafeBillServiceServer interface {
+	mustEmbedUnimplementedBillServiceServer()
+}
+
+func RegisterBillServiceServer(s grpc.ServiceRegistrar, srv BillServiceServer) {
+	s.RegisterService(&BillService_ServiceDesc, srv)
+}
+
+func _BillService_GetBills_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(UserId)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(BillServiceServer).GetBills(m, &billServiceGetBillsServer{stream})
+}
+
+type BillService_GetBillsServer interface {
+	Send(*Bill) error
+	grpc.ServerStream
+}
+
+type billServiceGetBillsServer struct {
+	grpc.ServerStream
+}
+
+func (x *billServiceGetBillsServer) Send(m *Bill) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _BillService_CreateBill_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Bill)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillServiceServer).CreateBill(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/homeit.BillService/CreateBill",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillServiceServer).CreateBill(ctx, req.(*Bill))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BillService_DeleteBill_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BillId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillServiceServer).DeleteBill(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/homeit.BillService/DeleteBill",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillServiceServer).DeleteBill(ctx, req.(*BillId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// BillService_ServiceDesc is the grpc.ServiceDesc for BillService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var BillService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "homeit.BillService",
+	HandlerType: (*BillServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateBill",
+			Handler:    _BillService_CreateBill_Handler,
+		},
+		{
+			MethodName: "DeleteBill",
+			Handler:    _BillService_DeleteBill_Handler,
+		},
+	},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "GetBills",
+			Handler:       _BillService_GetBills_Handler,
+			ServerStreams: true,
+		},
+	},
+	Metadata: "grpc.proto",
+}
+
 // FoodServiceClient is the client API for FoodService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
