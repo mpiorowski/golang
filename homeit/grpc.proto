@@ -92,7 +92,7 @@ message Bill {
   string id = 1;
   string created = 2;
   string updated = 3;
-  string deleted = 4;
+  bool deleted = 4;
 
   string userId = 5;
 
@@ -114,7 +114,7 @@ message Payment {
   string id = 1;
   string created = 2;
   string updated = 3;
-  string deleted = 4;
+  bool deleted = 4;
 
   string userId = 5;
   string billId = 6;
