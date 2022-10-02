@@ -24,7 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type UsersServiceClient interface {
 	CreateToken(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*Token, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
-	CreateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
+	CreateUser(ctx context.Context, opts ...grpc.CallOption) (UsersService_CreateUserClient, error)
 	GetUsers(ctx context.Context, in *Empty, opts ...grpc.CallOption) (UsersService_GetUsersClient, error)
 }
 
@@ -54,17 +54,42 @@ func (c *usersServiceClient) Login(ctx context.Context, in *LoginRequest, opts .
 	return out, nil
 }
 
-func (c *usersServiceClient) CreateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error) {
-	out := new(User)
-	err := c.cc.Invoke(ctx, "/homeit.UsersService/CreateUser", in, out, opts...)
+func (c *usersServiceClient) CreateUser(ctx context.Context, opts ...grpc.CallOption) (UsersService_CreateUserClient, error) {
+	stream, err := c.cc.NewStream(ctx, &UsersService_ServiceDesc.Streams[0], "/homeit.UsersService/CreateUser", opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &usersServiceCreateUserClient{stream}
+	return x, nil
+}
+
+type UsersService_CreateUserClient interface {
+	Send(*User) error
+	CloseAndRecv() (*User, error)
+	grpc.ClientStream
+}
+
+type usersServiceCreateUserClient struct {
+	grpc.ClientStream
+}
+
+func (x *usersServiceCreateUserClient) Send(m *User) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *usersServiceCreateUserClient) CloseAndRecv() (*User, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(User)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 func (c *usersServiceClient) GetUsers(ctx context.Context, in *Empty, opts ...grpc.CallOption) (UsersService_GetUsersClient, error) {
-	stream, err := c.cc.NewStream(ctx, &UsersService_ServiceDesc.Streams[0], "/homeit.UsersService/GetUsers", opts...)
+	stream, err := c.cc.NewStream(ctx, &UsersService_ServiceDesc.Streams[1], "/homeit.UsersService/GetUsers", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -101,7 +126,7 @@ func (x *usersServiceGetUsersClient) Recv() (*User, error) {
 type UsersServiceServer interface {
 	CreateToken(context.Context, *TokenRequest) (*Token, error)
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
-	CreateUser(context.Context, *User) (*User, error)
+	CreateUser(UsersService_CreateUserServer) error
 	GetUsers(*Empty, UsersService_GetUsersServer) error
 	mustEmbedUnimplementedUsersServiceServer()
 }
@@ -116,8 +141,8 @@ func (UnimplementedUsersServiceServer) CreateToken(context.Context, *TokenReques
 func (UnimplementedUsersServiceServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
-func (UnimplementedUsersServiceServer) CreateUser(context.Context, *User) (*User, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
+func (UnimplementedUsersServiceServer) CreateUser(UsersService_CreateUserServer) error {
+	return status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
 }
 func (UnimplementedUsersServiceServer) GetUsers(*Empty, UsersService_GetUsersServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetUsers not implemented")
@@ -171,22 +196,30 @@ func _UsersService_Login_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UsersService_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(User)
-	if err := dec(in); err != nil {
+func _UsersService_CreateUser_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(UsersServiceServer).CreateUser(&usersServiceCreateUserServer{stream})
+}
+
+type UsersService_CreateUserServer interface {
+	SendAndClose(*User) error
+	Recv() (*User, error)
+	grpc.ServerStream
+}
+
+type usersServiceCreateUserServer struct {
+	grpc.ServerStream
+}
+
+func (x *usersServiceCreateUserServer) SendAndClose(m *User) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *usersServiceCreateUserServer) Recv() (*User, error) {
+	m := new(User)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
-	if interceptor == nil {
-		return srv.(UsersServiceServer).CreateUser(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/homeit.UsersService/CreateUser",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UsersServiceServer).CreateUser(ctx, req.(*User))
-	}
-	return interceptor(ctx, in, info, handler)
+	return m, nil
 }
 
 func _UsersService_GetUsers_Handler(srv interface{}, stream grpc.ServerStream) error {
@@ -225,12 +258,13 @@ var UsersService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "Login",
 			Handler:    _UsersService_Login_Handler,
 		},
-		{
-			MethodName: "CreateUser",
-			Handler:    _UsersService_CreateUser_Handler,
-		},
 	},
 	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "CreateUser",
+			Handler:       _UsersService_CreateUser_Handler,
+			ClientStreams: true,
+		},
 		{
 			StreamName:    "GetUsers",
 			Handler:       _UsersService_GetUsers_Handler,
