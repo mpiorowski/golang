@@ -92,20 +92,21 @@ message Bill {
   string id = 1;
   string created = 2;
   string updated = 3;
+  string deleted = 4;
 
-  string userId = 4;
+  string userId = 5;
 
-  bool isPayed = 5;
-  string name = 6;
-  bool income = 7;
-  BillCategory category = 8;
-  BillFrequency frequency = 9;
-  bool qrCode = 10;
+  string name = 7;
+  BillCategory category = 9;
+  BillFrequency frequency = 10;
+  bool income = 8;
+  bool isPayed = 6;
+  bool qrCode = 11;
 
-  string defaultValue = 11;
-  string defaultAccountNumber = 12;
-  string defaultAccountReciever = 13;
-  string defaultAccountDescription = 14;
+  string defaultValue = 12;
+  string defaultAccountNumber = 13;
+  string defaultAccountReciever = 14;
+  string defaultAccountDescription = 15;
 }
 
 message Payments {
