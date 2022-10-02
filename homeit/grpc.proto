@@ -57,7 +57,7 @@ message User {
 
   bool active = 4;
   string email = 5;
-  UserRole role = 6;
+  string role = 6;
   string lastLogin = 7;
 }
 
@@ -68,12 +68,12 @@ service BillService {
 }
 
 enum BillCategory {
-  CATEGORY_HOUSE = 0;
-  CATEGORY_WORK = 1;
-  CATEGORY_COMPANY = 2;
-  CATEGORY_OTHER = 3;
-  CATEGORY_ACCOUNT = 4;
-  CATEGORY_ADDITIONAL = 5;
+  HOUSE = 0;
+  WORK = 1;
+  COMPANY = 2;
+  OTHER = 3;
+  ACCOUNT = 4;
+  ADDITIONAL = 5;
 }
 enum BillFrequency {
   MONTH = 0;
@@ -96,20 +96,23 @@ message Bill {
 
   string userId = 5;
 
-  string name = 7;
-  BillCategory category = 9;
-  BillFrequency frequency = 10;
-  bool income = 8;
-  bool isPayed = 6;
-  bool qrCode = 11;
+  string name = 6;
+  string category = 7;
+  string frequency = 8;
+  bool income = 9;
+  bool qrCode = 10;
 
-  string defaultValue = 12;
-  string defaultAccountNumber = 13;
-  string defaultAccountReciever = 14;
-  string defaultAccountDescription = 15;
+  string defaultValue = 11;
+  string defaultAccountNumber = 12;
+  string defaultAccountReciever = 13;
+  string defaultAccountDescription = 14;
+
+  bool isPayed = 15;
+  repeated Payment payments = 16;
+
 }
 
-message Payments {
+message Payment {
   string id = 1;
   string created = 2;
   string updated = 3;
