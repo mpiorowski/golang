@@ -108,23 +108,22 @@ message Bill {
   string defaultAccountDescription = 14;
 
   bool isPayed = 15;
-  repeated Payment payments = 16;
-
 }
 
 message Payment {
   string id = 1;
   string created = 2;
   string updated = 3;
+  string deleted = 4;
 
-  string userId = 4;
-  string billId = 5;
+  string userId = 5;
+  string billId = 6;
 
-  string value = 6;
-  string date = 7;
-  string accountNumber = 8;
-  string accountReciever = 9;
-  string accountDescription = 10;
+  string value = 7;
+  string date = 8;
+  string accountNumber = 9;
+  string accountReciever = 10;
+  string accountDescription = 11;
 }
 
 service FoodService {
