@@ -65,7 +65,7 @@ func (c *usersServiceClient) CreateUser(ctx context.Context, opts ...grpc.CallOp
 
 type UsersService_CreateUserClient interface {
 	Send(*User) error
-	CloseAndRecv() (*User, error)
+	Recv() (*User, error)
 	grpc.ClientStream
 }
 
@@ -77,10 +77,7 @@ func (x *usersServiceCreateUserClient) Send(m *User) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *usersServiceCreateUserClient) CloseAndRecv() (*User, error) {
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
+func (x *usersServiceCreateUserClient) Recv() (*User, error) {
 	m := new(User)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -201,7 +198,7 @@ func _UsersService_CreateUser_Handler(srv interface{}, stream grpc.ServerStream)
 }
 
 type UsersService_CreateUserServer interface {
-	SendAndClose(*User) error
+	Send(*User) error
 	Recv() (*User, error)
 	grpc.ServerStream
 }
@@ -210,7 +207,7 @@ type usersServiceCreateUserServer struct {
 	grpc.ServerStream
 }
 
-func (x *usersServiceCreateUserServer) SendAndClose(m *User) error {
+func (x *usersServiceCreateUserServer) Send(m *User) error {
 	return x.ServerStream.SendMsg(m)
 }
 
@@ -263,6 +260,7 @@ var UsersService_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "CreateUser",
 			Handler:       _UsersService_CreateUser_Handler,
+			ServerStreams: true,
 			ClientStreams: true,
 		},
 		{
