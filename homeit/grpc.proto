@@ -68,12 +68,12 @@ service BillService {
 }
 
 enum BillCategory {
-  HOUSE = 0;
-  WORK = 1;
-  COMPANY = 2;
-  OTHER = 3;
-  ACCOUNT = 4;
-  ADDITIONAL = 5;
+  CATEGORY_HOUSE = 0;
+  CATEGORY_WORK = 1;
+  CATEGORY_COMPANY = 2;
+  CATEGORY_OTHER = 3;
+  CATEGORY_ACCOUNT = 4;
+  CATEGORY_ADDITIONAL = 5;
 }
 enum BillFrequency {
   MONTH = 0;
