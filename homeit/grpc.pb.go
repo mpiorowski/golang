@@ -666,21 +666,21 @@ type Bill struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id                        string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Created                   string `protobuf:"bytes,2,opt,name=created,proto3" json:"created,omitempty"`
-	Updated                   string `protobuf:"bytes,3,opt,name=updated,proto3" json:"updated,omitempty"`
-	Deleted                   string `protobuf:"bytes,4,opt,name=deleted,proto3" json:"deleted,omitempty"`
-	UserId                    string `protobuf:"bytes,5,opt,name=userId,proto3" json:"userId,omitempty"`
-	Name                      string `protobuf:"bytes,6,opt,name=name,proto3" json:"name,omitempty"`
-	Category                  string `protobuf:"bytes,7,opt,name=category,proto3" json:"category,omitempty"`
-	Frequency                 string `protobuf:"bytes,8,opt,name=frequency,proto3" json:"frequency,omitempty"`
-	Income                    bool   `protobuf:"varint,9,opt,name=income,proto3" json:"income,omitempty"`
-	QrCode                    bool   `protobuf:"varint,10,opt,name=qrCode,proto3" json:"qrCode,omitempty"`
-	DefaultValue              string `protobuf:"bytes,11,opt,name=defaultValue,proto3" json:"defaultValue,omitempty"`
-	DefaultAccountNumber      string `protobuf:"bytes,12,opt,name=defaultAccountNumber,proto3" json:"defaultAccountNumber,omitempty"`
-	DefaultAccountReciever    string `protobuf:"bytes,13,opt,name=defaultAccountReciever,proto3" json:"defaultAccountReciever,omitempty"`
-	DefaultAccountDescription string `protobuf:"bytes,14,opt,name=defaultAccountDescription,proto3" json:"defaultAccountDescription,omitempty"`
-	IsPayed                   bool   `protobuf:"varint,15,opt,name=isPayed,proto3" json:"isPayed,omitempty"`
+	Id                        string  `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Created                   string  `protobuf:"bytes,2,opt,name=created,proto3" json:"created,omitempty"`
+	Updated                   string  `protobuf:"bytes,3,opt,name=updated,proto3" json:"updated,omitempty"`
+	Deleted                   string  `protobuf:"bytes,4,opt,name=deleted,proto3" json:"deleted,omitempty"`
+	UserId                    string  `protobuf:"bytes,5,opt,name=userId,proto3" json:"userId,omitempty"`
+	Name                      string  `protobuf:"bytes,6,opt,name=name,proto3" json:"name,omitempty"`
+	Category                  string  `protobuf:"bytes,7,opt,name=category,proto3" json:"category,omitempty"`
+	Frequency                 string  `protobuf:"bytes,8,opt,name=frequency,proto3" json:"frequency,omitempty"`
+	Income                    bool    `protobuf:"varint,9,opt,name=income,proto3" json:"income,omitempty"`
+	QrCode                    bool    `protobuf:"varint,10,opt,name=qrCode,proto3" json:"qrCode,omitempty"`
+	DefaultValue              float32 `protobuf:"fixed32,11,opt,name=defaultValue,proto3" json:"defaultValue,omitempty"`
+	DefaultAccountNumber      string  `protobuf:"bytes,12,opt,name=defaultAccountNumber,proto3" json:"defaultAccountNumber,omitempty"`
+	DefaultAccountReciever    string  `protobuf:"bytes,13,opt,name=defaultAccountReciever,proto3" json:"defaultAccountReciever,omitempty"`
+	DefaultAccountDescription string  `protobuf:"bytes,14,opt,name=defaultAccountDescription,proto3" json:"defaultAccountDescription,omitempty"`
+	IsPayed                   bool    `protobuf:"varint,15,opt,name=isPayed,proto3" json:"isPayed,omitempty"`
 }
 
 func (x *Bill) Reset() {
@@ -785,11 +785,11 @@ func (x *Bill) GetQrCode() bool {
 	return false
 }
 
-func (x *Bill) GetDefaultValue() string {
+func (x *Bill) GetDefaultValue() float32 {
 	if x != nil {
 		return x.DefaultValue
 	}
-	return ""
+	return 0
 }
 
 func (x *Bill) GetDefaultAccountNumber() string {
@@ -1193,7 +1193,7 @@ var file_grpc_proto_rawDesc = []byte{
 	0x6d, 0x65, 0x18, 0x09, 0x20, 0x01, 0x28, 0x08, 0x52, 0x06, 0x69, 0x6e, 0x63, 0x6f, 0x6d, 0x65,
 	0x12, 0x16, 0x0a, 0x06, 0x71, 0x72, 0x43, 0x6f, 0x64, 0x65, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x08,
 	0x52, 0x06, 0x71, 0x72, 0x43, 0x6f, 0x64, 0x65, 0x12, 0x22, 0x0a, 0x0c, 0x64, 0x65, 0x66, 0x61,
-	0x75, 0x6c, 0x74, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x0b, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c,
+	0x75, 0x6c, 0x74, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x0b, 0x20, 0x01, 0x28, 0x02, 0x52, 0x0c,
 	0x64, 0x65, 0x66, 0x61, 0x75, 0x6c, 0x74, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x12, 0x32, 0x0a, 0x14,
 	0x64, 0x65, 0x66, 0x61, 0x75, 0x6c, 0x74, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x4e, 0x75,
 	0x6d, 0x62, 0x65, 0x72, 0x18, 0x0c, 0x20, 0x01, 0x28, 0x09, 0x52, 0x14, 0x64, 0x65, 0x66, 0x61,
