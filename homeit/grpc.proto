@@ -65,6 +65,10 @@ service BillService {
   rpc GetBills(UserId) returns (stream Bill) {}
   rpc CreateBill(Bill) returns (Bill) {}
   rpc DeleteBill(BillId) returns (Bill) {}
+
+  rpc GetPayments(BillId) returns (stream Payment) {}
+  rpc CreatePayment(Payment) returns (Payment) {}
+  rpc DeletePayment(PaymentId) returns (Payment) {}
 }
 
 enum BillCategory {
@@ -88,6 +92,10 @@ message BillId {
   string billId = 1;
 }
 
+message PaymentId {
+  string paymentId = 1;
+}
+
 message Bill {
   string id = 1;
   string created = 2;
@@ -99,15 +107,15 @@ message Bill {
   string name = 6;
   string category = 7;
   string frequency = 8;
-  bool income = 9;
-  bool qrCode = 10;
+  optional bool income = 9;
+  optional bool qrCode = 10;
 
-  float defaultValue = 11;
+  optional float defaultValue = 11;
   optional string defaultAccountNumber = 12;
   optional string defaultAccountReciever = 13;
   optional string defaultAccountDescription = 14;
 
-  bool isPayed = 15;
+  optional bool isPayed = 15;
 }
 
 message Payment {
@@ -121,9 +129,9 @@ message Payment {
 
   string value = 7;
   string date = 8;
-  string accountNumber = 9;
-  string accountReciever = 10;
-  string accountDescription = 11;
+  optional string accountNumber = 9;
+  optional string accountReciever = 10;
+  optional string accountDescription = 11;
 }
 
 service FoodService {
