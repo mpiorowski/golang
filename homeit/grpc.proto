@@ -129,7 +129,7 @@ message Payment {
   string userId = 5;
   string billId = 6;
 
-  string value = 7;
+  float value = 7;
   string date = 8;
   optional string accountNumber = 9;
   optional string accountReciever = 10;
