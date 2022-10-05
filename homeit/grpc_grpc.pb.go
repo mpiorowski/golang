@@ -283,6 +283,7 @@ type BillServiceClient interface {
 	GetBillPayments(ctx context.Context, in *BillId, opts ...grpc.CallOption) (BillService_GetBillPaymentsClient, error)
 	CreatePayment(ctx context.Context, in *Payment, opts ...grpc.CallOption) (*Payment, error)
 	DeletePayment(ctx context.Context, in *PaymentId, opts ...grpc.CallOption) (*Payment, error)
+	GetSavings(ctx context.Context, in *UserId, opts ...grpc.CallOption) (BillService_GetSavingsClient, error)
 }
 
 type billServiceClient struct {
@@ -425,6 +426,38 @@ func (c *billServiceClient) DeletePayment(ctx context.Context, in *PaymentId, op
 	return out, nil
 }
 
+func (c *billServiceClient) GetSavings(ctx context.Context, in *UserId, opts ...grpc.CallOption) (BillService_GetSavingsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &BillService_ServiceDesc.Streams[3], "/homeit.BillService/GetSavings", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &billServiceGetSavingsClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type BillService_GetSavingsClient interface {
+	Recv() (*Saving, error)
+	grpc.ClientStream
+}
+
+type billServiceGetSavingsClient struct {
+	grpc.ClientStream
+}
+
+func (x *billServiceGetSavingsClient) Recv() (*Saving, error) {
+	m := new(Saving)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // BillServiceServer is the server API for BillService service.
 // All implementations must embed UnimplementedBillServiceServer
 // for forward compatibility
@@ -436,6 +469,7 @@ type BillServiceServer interface {
 	GetBillPayments(*BillId, BillService_GetBillPaymentsServer) error
 	CreatePayment(context.Context, *Payment) (*Payment, error)
 	DeletePayment(context.Context, *PaymentId) (*Payment, error)
+	GetSavings(*UserId, BillService_GetSavingsServer) error
 	mustEmbedUnimplementedBillServiceServer()
 }
 
@@ -463,6 +497,9 @@ func (UnimplementedBillServiceServer) CreatePayment(context.Context, *Payment) (
 }
 func (UnimplementedBillServiceServer) DeletePayment(context.Context, *PaymentId) (*Payment, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeletePayment not implemented")
+}
+func (UnimplementedBillServiceServer) GetSavings(*UserId, BillService_GetSavingsServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetSavings not implemented")
 }
 func (UnimplementedBillServiceServer) mustEmbedUnimplementedBillServiceServer() {}
 
@@ -612,6 +649,27 @@ func _BillService_DeletePayment_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BillService_GetSavings_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(UserId)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(BillServiceServer).GetSavings(m, &billServiceGetSavingsServer{stream})
+}
+
+type BillService_GetSavingsServer interface {
+	Send(*Saving) error
+	grpc.ServerStream
+}
+
+type billServiceGetSavingsServer struct {
+	grpc.ServerStream
+}
+
+func (x *billServiceGetSavingsServer) Send(m *Saving) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // BillService_ServiceDesc is the grpc.ServiceDesc for BillService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -650,6 +708,11 @@ var BillService_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "GetBillPayments",
 			Handler:       _BillService_GetBillPayments_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "GetSavings",
+			Handler:       _BillService_GetSavings_Handler,
 			ServerStreams: true,
 		},
 	},

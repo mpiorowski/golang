@@ -70,6 +70,8 @@ service BillService {
   rpc GetBillPayments(BillId) returns (stream Payment) {}
   rpc CreatePayment(Payment) returns (Payment) {}
   rpc DeletePayment(PaymentId) returns (Payment) {}
+
+  rpc GetSavings(UserId) returns (stream Saving) {}
 }
 
 enum BillCategory {
@@ -133,6 +135,14 @@ message Payment {
   optional string accountNumber = 9;
   optional string accountReciever = 10;
   optional string accountDescription = 11;
+}
+
+message Saving {
+  string billId = 1;
+  string billCategory = 2;
+  string billName = 3;
+  float previousMonth = 4;
+  float currentMonth = 5;
 }
 
 service FoodService {
