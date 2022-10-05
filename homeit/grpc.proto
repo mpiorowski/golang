@@ -142,8 +142,8 @@ message Saving {
   string billCategory = 2;
   string billName = 3;
   optional bool billIncome = 4;
-  float previousMonth = 5;
-  float currentMonth = 6;
+  optional float previousMonth = 5;
+  optional float currentMonth = 6;
 }
 
 service FoodService {
