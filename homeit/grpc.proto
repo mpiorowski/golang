@@ -66,7 +66,7 @@ service BillService {
   rpc CreateBill(Bill) returns (Bill) {}
   rpc DeleteBill(BillId) returns (Bill) {}
 
-  rpc GetPayments(PaymentsRequest) returns (stream Payment) {}
+  rpc GetPayments(BillId) returns (stream Payment) {}
   rpc CreatePayment(Payment) returns (Payment) {}
   rpc DeletePayment(PaymentId) returns (Payment) {}
 }
@@ -88,15 +88,13 @@ enum BillFrequency {
   NONE = 5;
 }
 
-message PaymentsRequest {
-  string userId = 1;
-  string billId = 2;
-}
 message BillId {
   string billId = 1;
+  string userId = 2;
 }
 message PaymentId {
   string paymentId = 1;
+  string userId = 2;
 }
 message Bill {
   string id = 1;

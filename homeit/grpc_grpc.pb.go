@@ -279,7 +279,7 @@ type BillServiceClient interface {
 	GetBills(ctx context.Context, in *UserId, opts ...grpc.CallOption) (BillService_GetBillsClient, error)
 	CreateBill(ctx context.Context, in *Bill, opts ...grpc.CallOption) (*Bill, error)
 	DeleteBill(ctx context.Context, in *BillId, opts ...grpc.CallOption) (*Bill, error)
-	GetPayments(ctx context.Context, in *PaymentsRequest, opts ...grpc.CallOption) (BillService_GetPaymentsClient, error)
+	GetPayments(ctx context.Context, in *BillId, opts ...grpc.CallOption) (BillService_GetPaymentsClient, error)
 	CreatePayment(ctx context.Context, in *Payment, opts ...grpc.CallOption) (*Payment, error)
 	DeletePayment(ctx context.Context, in *PaymentId, opts ...grpc.CallOption) (*Payment, error)
 }
@@ -342,7 +342,7 @@ func (c *billServiceClient) DeleteBill(ctx context.Context, in *BillId, opts ...
 	return out, nil
 }
 
-func (c *billServiceClient) GetPayments(ctx context.Context, in *PaymentsRequest, opts ...grpc.CallOption) (BillService_GetPaymentsClient, error) {
+func (c *billServiceClient) GetPayments(ctx context.Context, in *BillId, opts ...grpc.CallOption) (BillService_GetPaymentsClient, error) {
 	stream, err := c.cc.NewStream(ctx, &BillService_ServiceDesc.Streams[1], "/homeit.BillService/GetPayments", opts...)
 	if err != nil {
 		return nil, err
@@ -399,7 +399,7 @@ type BillServiceServer interface {
 	GetBills(*UserId, BillService_GetBillsServer) error
 	CreateBill(context.Context, *Bill) (*Bill, error)
 	DeleteBill(context.Context, *BillId) (*Bill, error)
-	GetPayments(*PaymentsRequest, BillService_GetPaymentsServer) error
+	GetPayments(*BillId, BillService_GetPaymentsServer) error
 	CreatePayment(context.Context, *Payment) (*Payment, error)
 	DeletePayment(context.Context, *PaymentId) (*Payment, error)
 	mustEmbedUnimplementedBillServiceServer()
@@ -418,7 +418,7 @@ func (UnimplementedBillServiceServer) CreateBill(context.Context, *Bill) (*Bill,
 func (UnimplementedBillServiceServer) DeleteBill(context.Context, *BillId) (*Bill, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteBill not implemented")
 }
-func (UnimplementedBillServiceServer) GetPayments(*PaymentsRequest, BillService_GetPaymentsServer) error {
+func (UnimplementedBillServiceServer) GetPayments(*BillId, BillService_GetPaymentsServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetPayments not implemented")
 }
 func (UnimplementedBillServiceServer) CreatePayment(context.Context, *Payment) (*Payment, error) {
@@ -498,7 +498,7 @@ func _BillService_DeleteBill_Handler(srv interface{}, ctx context.Context, dec f
 }
 
 func _BillService_GetPayments_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(PaymentsRequest)
+	m := new(BillId)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
