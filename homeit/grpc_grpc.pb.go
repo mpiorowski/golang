@@ -23,7 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UsersServiceClient interface {
 	CreateToken(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*Token, error)
-	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
+	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*Session, error)
 	CreateUser(ctx context.Context, opts ...grpc.CallOption) (UsersService_CreateUserClient, error)
 	GetUsers(ctx context.Context, in *Empty, opts ...grpc.CallOption) (UsersService_GetUsersClient, error)
 }
@@ -45,8 +45,8 @@ func (c *usersServiceClient) CreateToken(ctx context.Context, in *TokenRequest, 
 	return out, nil
 }
 
-func (c *usersServiceClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error) {
-	out := new(LoginResponse)
+func (c *usersServiceClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*Session, error) {
+	out := new(Session)
 	err := c.cc.Invoke(ctx, "/homeit.UsersService/Login", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -122,7 +122,7 @@ func (x *usersServiceGetUsersClient) Recv() (*User, error) {
 // for forward compatibility
 type UsersServiceServer interface {
 	CreateToken(context.Context, *TokenRequest) (*Token, error)
-	Login(context.Context, *LoginRequest) (*LoginResponse, error)
+	Login(context.Context, *LoginRequest) (*Session, error)
 	CreateUser(UsersService_CreateUserServer) error
 	GetUsers(*Empty, UsersService_GetUsersServer) error
 	mustEmbedUnimplementedUsersServiceServer()
@@ -135,7 +135,7 @@ type UnimplementedUsersServiceServer struct {
 func (UnimplementedUsersServiceServer) CreateToken(context.Context, *TokenRequest) (*Token, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateToken not implemented")
 }
-func (UnimplementedUsersServiceServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
+func (UnimplementedUsersServiceServer) Login(context.Context, *LoginRequest) (*Session, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
 func (UnimplementedUsersServiceServer) CreateUser(UsersService_CreateUserServer) error {
