@@ -723,7 +723,7 @@ var BillService_ServiceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type FoodServiceClient interface {
-	GetSupplies(ctx context.Context, in *Empty, opts ...grpc.CallOption) (FoodService_GetSuppliesClient, error)
+	GetSupplies(ctx context.Context, in *UserId, opts ...grpc.CallOption) (FoodService_GetSuppliesClient, error)
 	CreateSupply(ctx context.Context, in *Supply, opts ...grpc.CallOption) (*Supply, error)
 	DeleteSupply(ctx context.Context, in *SupplyId, opts ...grpc.CallOption) (*Supply, error)
 }
@@ -736,7 +736,7 @@ func NewFoodServiceClient(cc grpc.ClientConnInterface) FoodServiceClient {
 	return &foodServiceClient{cc}
 }
 
-func (c *foodServiceClient) GetSupplies(ctx context.Context, in *Empty, opts ...grpc.CallOption) (FoodService_GetSuppliesClient, error) {
+func (c *foodServiceClient) GetSupplies(ctx context.Context, in *UserId, opts ...grpc.CallOption) (FoodService_GetSuppliesClient, error) {
 	stream, err := c.cc.NewStream(ctx, &FoodService_ServiceDesc.Streams[0], "/homeit.FoodService/GetSupplies", opts...)
 	if err != nil {
 		return nil, err
@@ -790,7 +790,7 @@ func (c *foodServiceClient) DeleteSupply(ctx context.Context, in *SupplyId, opts
 // All implementations must embed UnimplementedFoodServiceServer
 // for forward compatibility
 type FoodServiceServer interface {
-	GetSupplies(*Empty, FoodService_GetSuppliesServer) error
+	GetSupplies(*UserId, FoodService_GetSuppliesServer) error
 	CreateSupply(context.Context, *Supply) (*Supply, error)
 	DeleteSupply(context.Context, *SupplyId) (*Supply, error)
 	mustEmbedUnimplementedFoodServiceServer()
@@ -800,7 +800,7 @@ type FoodServiceServer interface {
 type UnimplementedFoodServiceServer struct {
 }
 
-func (UnimplementedFoodServiceServer) GetSupplies(*Empty, FoodService_GetSuppliesServer) error {
+func (UnimplementedFoodServiceServer) GetSupplies(*UserId, FoodService_GetSuppliesServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetSupplies not implemented")
 }
 func (UnimplementedFoodServiceServer) CreateSupply(context.Context, *Supply) (*Supply, error) {
@@ -823,7 +823,7 @@ func RegisterFoodServiceServer(s grpc.ServiceRegistrar, srv FoodServiceServer) {
 }
 
 func _FoodService_GetSupplies_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(Empty)
+	m := new(UserId)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}

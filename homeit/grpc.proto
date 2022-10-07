@@ -149,7 +149,7 @@ message Saving {
 }
 
 service FoodService {
-  rpc GetSupplies(Empty) returns (stream Supply) {}
+  rpc GetSupplies(UserId) returns (stream Supply) {}
   rpc CreateSupply(Supply) returns (Supply) {}
   rpc DeleteSupply(SupplyId) returns (Supply) {}
 }
