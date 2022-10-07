@@ -33,6 +33,7 @@ message Session {
   string sessionId = 1;
   string userId = 2;
   string role = 3;
+  string email = 4;
 }
 
 message Token {
@@ -148,26 +149,25 @@ message Saving {
 }
 
 service FoodService {
-  rpc GetSupplies(Empty) returns (Supplies) {}
+  rpc GetSupplies(Empty) returns (stream Supply) {}
   rpc CreateSupply(Supply) returns (Supply) {}
   rpc DeleteSupply(SupplyId) returns (Supply) {}
 }
 
 message SupplyId {
-  string id = 1;
+  string supplyId = 1;
   string userId = 2;
-}
-
-message Supplies {
-  repeated Supply supplies = 1;
 }
 
 message Supply {
   string id = 1;
   string created = 2;
   string updated = 3;
+  bool deleted = 4;
 
-  string userId = 4;
-  string name = 5;
-  int32 priority = 6;
+  string userId = 5;
+
+  string name = 6;
+  int32 amount = 7;
+  int32 priority = 8;
 }

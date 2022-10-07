@@ -723,7 +723,7 @@ var BillService_ServiceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type FoodServiceClient interface {
-	GetSupplies(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Supplies, error)
+	GetSupplies(ctx context.Context, in *Empty, opts ...grpc.CallOption) (FoodService_GetSuppliesClient, error)
 	CreateSupply(ctx context.Context, in *Supply, opts ...grpc.CallOption) (*Supply, error)
 	DeleteSupply(ctx context.Context, in *SupplyId, opts ...grpc.CallOption) (*Supply, error)
 }
@@ -736,13 +736,36 @@ func NewFoodServiceClient(cc grpc.ClientConnInterface) FoodServiceClient {
 	return &foodServiceClient{cc}
 }
 
-func (c *foodServiceClient) GetSupplies(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Supplies, error) {
-	out := new(Supplies)
-	err := c.cc.Invoke(ctx, "/homeit.FoodService/GetSupplies", in, out, opts...)
+func (c *foodServiceClient) GetSupplies(ctx context.Context, in *Empty, opts ...grpc.CallOption) (FoodService_GetSuppliesClient, error) {
+	stream, err := c.cc.NewStream(ctx, &FoodService_ServiceDesc.Streams[0], "/homeit.FoodService/GetSupplies", opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &foodServiceGetSuppliesClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type FoodService_GetSuppliesClient interface {
+	Recv() (*Supply, error)
+	grpc.ClientStream
+}
+
+type foodServiceGetSuppliesClient struct {
+	grpc.ClientStream
+}
+
+func (x *foodServiceGetSuppliesClient) Recv() (*Supply, error) {
+	m := new(Supply)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 func (c *foodServiceClient) CreateSupply(ctx context.Context, in *Supply, opts ...grpc.CallOption) (*Supply, error) {
@@ -767,7 +790,7 @@ func (c *foodServiceClient) DeleteSupply(ctx context.Context, in *SupplyId, opts
 // All implementations must embed UnimplementedFoodServiceServer
 // for forward compatibility
 type FoodServiceServer interface {
-	GetSupplies(context.Context, *Empty) (*Supplies, error)
+	GetSupplies(*Empty, FoodService_GetSuppliesServer) error
 	CreateSupply(context.Context, *Supply) (*Supply, error)
 	DeleteSupply(context.Context, *SupplyId) (*Supply, error)
 	mustEmbedUnimplementedFoodServiceServer()
@@ -777,8 +800,8 @@ type FoodServiceServer interface {
 type UnimplementedFoodServiceServer struct {
 }
 
-func (UnimplementedFoodServiceServer) GetSupplies(context.Context, *Empty) (*Supplies, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetSupplies not implemented")
+func (UnimplementedFoodServiceServer) GetSupplies(*Empty, FoodService_GetSuppliesServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetSupplies not implemented")
 }
 func (UnimplementedFoodServiceServer) CreateSupply(context.Context, *Supply) (*Supply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateSupply not implemented")
@@ -799,22 +822,25 @@ func RegisterFoodServiceServer(s grpc.ServiceRegistrar, srv FoodServiceServer) {
 	s.RegisterService(&FoodService_ServiceDesc, srv)
 }
 
-func _FoodService_GetSupplies_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Empty)
-	if err := dec(in); err != nil {
-		return nil, err
+func _FoodService_GetSupplies_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(Empty)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
 	}
-	if interceptor == nil {
-		return srv.(FoodServiceServer).GetSupplies(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/homeit.FoodService/GetSupplies",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FoodServiceServer).GetSupplies(ctx, req.(*Empty))
-	}
-	return interceptor(ctx, in, info, handler)
+	return srv.(FoodServiceServer).GetSupplies(m, &foodServiceGetSuppliesServer{stream})
+}
+
+type FoodService_GetSuppliesServer interface {
+	Send(*Supply) error
+	grpc.ServerStream
+}
+
+type foodServiceGetSuppliesServer struct {
+	grpc.ServerStream
+}
+
+func (x *foodServiceGetSuppliesServer) Send(m *Supply) error {
+	return x.ServerStream.SendMsg(m)
 }
 
 func _FoodService_CreateSupply_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -861,10 +887,6 @@ var FoodService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*FoodServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetSupplies",
-			Handler:    _FoodService_GetSupplies_Handler,
-		},
-		{
 			MethodName: "CreateSupply",
 			Handler:    _FoodService_CreateSupply_Handler,
 		},
@@ -873,6 +895,12 @@ var FoodService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _FoodService_DeleteSupply_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "GetSupplies",
+			Handler:       _FoodService_GetSupplies_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "grpc.proto",
 }
