@@ -17,7 +17,7 @@ import (
 	grpcMetadata "google.golang.org/grpc/metadata"
 )
 
-func CreateContext(host string, env string, redisHost string) (context.Context, context.CancelFunc, error) {
+func CreateContext(env string, host string, redisHost string, redisPass string) (context.Context, context.CancelFunc, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	if env != "production" {
 		return ctx, cancel, nil
@@ -26,7 +26,7 @@ func CreateContext(host string, env string, redisHost string) (context.Context, 
 	// Check if token is in cache
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     redisHost,
-		Password: "",
+		Password: redisPass,
 		DB:       0, // use default DB
 	})
 
@@ -56,9 +56,9 @@ func CreateContext(host string, env string, redisHost string) (context.Context, 
 	return ctx, cancel, nil
 }
 
-func Connect(host string, env string, redisHost string) (*grpc.ClientConn, error, context.Context, context.CancelFunc) {
+func Connect(env string, host string, redisHost string, redisPass string) (*grpc.ClientConn, error, context.Context, context.CancelFunc) {
 	// Create a context with a timeout that will be used to dial the server.
-	ctx, cancel, err := CreateContext(host, env, redisHost)
+	ctx, cancel, err := CreateContext(env, host, redisHost, redisPass)
 	if err != nil {
 		return nil, err, ctx, cancel
 	}
