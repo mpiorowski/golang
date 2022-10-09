@@ -272,6 +272,192 @@ var UsersService_ServiceDesc = grpc.ServiceDesc{
 	Metadata: "grpc.proto",
 }
 
+// FilesServiceClient is the client API for FilesService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type FilesServiceClient interface {
+	GetFiles(ctx context.Context, in *TargetId, opts ...grpc.CallOption) (FilesService_GetFilesClient, error)
+	CreateFile(ctx context.Context, in *File, opts ...grpc.CallOption) (*File, error)
+	DeleteFile(ctx context.Context, in *FileId, opts ...grpc.CallOption) (*File, error)
+}
+
+type filesServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewFilesServiceClient(cc grpc.ClientConnInterface) FilesServiceClient {
+	return &filesServiceClient{cc}
+}
+
+func (c *filesServiceClient) GetFiles(ctx context.Context, in *TargetId, opts ...grpc.CallOption) (FilesService_GetFilesClient, error) {
+	stream, err := c.cc.NewStream(ctx, &FilesService_ServiceDesc.Streams[0], "/homeit.FilesService/GetFiles", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &filesServiceGetFilesClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type FilesService_GetFilesClient interface {
+	Recv() (*File, error)
+	grpc.ClientStream
+}
+
+type filesServiceGetFilesClient struct {
+	grpc.ClientStream
+}
+
+func (x *filesServiceGetFilesClient) Recv() (*File, error) {
+	m := new(File)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *filesServiceClient) CreateFile(ctx context.Context, in *File, opts ...grpc.CallOption) (*File, error) {
+	out := new(File)
+	err := c.cc.Invoke(ctx, "/homeit.FilesService/CreateFile", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *filesServiceClient) DeleteFile(ctx context.Context, in *FileId, opts ...grpc.CallOption) (*File, error) {
+	out := new(File)
+	err := c.cc.Invoke(ctx, "/homeit.FilesService/DeleteFile", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// FilesServiceServer is the server API for FilesService service.
+// All implementations must embed UnimplementedFilesServiceServer
+// for forward compatibility
+type FilesServiceServer interface {
+	GetFiles(*TargetId, FilesService_GetFilesServer) error
+	CreateFile(context.Context, *File) (*File, error)
+	DeleteFile(context.Context, *FileId) (*File, error)
+	mustEmbedUnimplementedFilesServiceServer()
+}
+
+// UnimplementedFilesServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedFilesServiceServer struct {
+}
+
+func (UnimplementedFilesServiceServer) GetFiles(*TargetId, FilesService_GetFilesServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetFiles not implemented")
+}
+func (UnimplementedFilesServiceServer) CreateFile(context.Context, *File) (*File, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateFile not implemented")
+}
+func (UnimplementedFilesServiceServer) DeleteFile(context.Context, *FileId) (*File, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteFile not implemented")
+}
+func (UnimplementedFilesServiceServer) mustEmbedUnimplementedFilesServiceServer() {}
+
+// UnsafeFilesServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to FilesServiceServer will
+// result in compilation errors.
+type UnsafeFilesServiceServer interface {
+	mustEmbedUnimplementedFilesServiceServer()
+}
+
+func RegisterFilesServiceServer(s grpc.ServiceRegistrar, srv FilesServiceServer) {
+	s.RegisterService(&FilesService_ServiceDesc, srv)
+}
+
+func _FilesService_GetFiles_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(TargetId)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(FilesServiceServer).GetFiles(m, &filesServiceGetFilesServer{stream})
+}
+
+type FilesService_GetFilesServer interface {
+	Send(*File) error
+	grpc.ServerStream
+}
+
+type filesServiceGetFilesServer struct {
+	grpc.ServerStream
+}
+
+func (x *filesServiceGetFilesServer) Send(m *File) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _FilesService_CreateFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(File)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FilesServiceServer).CreateFile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/homeit.FilesService/CreateFile",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FilesServiceServer).CreateFile(ctx, req.(*File))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _FilesService_DeleteFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FileId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FilesServiceServer).DeleteFile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/homeit.FilesService/DeleteFile",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FilesServiceServer).DeleteFile(ctx, req.(*FileId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// FilesService_ServiceDesc is the grpc.ServiceDesc for FilesService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var FilesService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "homeit.FilesService",
+	HandlerType: (*FilesServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateFile",
+			Handler:    _FilesService_CreateFile_Handler,
+		},
+		{
+			MethodName: "DeleteFile",
+			Handler:    _FilesService_DeleteFile_Handler,
+		},
+	},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "GetFiles",
+			Handler:       _FilesService_GetFiles_Handler,
+			ServerStreams: true,
+		},
+	},
+	Metadata: "grpc.proto",
+}
+
 // BillServiceClient is the client API for BillService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.

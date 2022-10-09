@@ -63,6 +63,33 @@ message User {
   string lastLogin = 7;
 }
 
+service FilesService {
+  rpc GetFiles(TargetId) returns (stream File) {}
+  rpc CreateFile(File) returns (File) {}
+  rpc DeleteFile(FileId) returns (File) {}
+}
+
+message TargetId {
+  string targetId = 1;
+  string userId = 2;
+}
+
+message FileId {
+  string fileId = 1;
+  string userId = 2;
+}
+
+message File {
+  string id = 1;
+  string created = 2;
+  string updated = 3;
+  bool deleted = 4;
+
+  string targetId = 5;
+  string name = 6;
+  string type = 7;
+}
+
 service BillService {
   rpc GetBills(UserId) returns (stream Bill) {}
   rpc CreateBill(Bill) returns (Bill) {}
