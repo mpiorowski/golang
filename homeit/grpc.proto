@@ -71,12 +71,11 @@ service FilesService {
 
 message TargetId {
   string targetId = 1;
-  string userId = 2;
 }
 
 message FileId {
   string fileId = 1;
-  string userId = 2;
+  string targetId = 2;
 }
 
 message File {
@@ -90,6 +89,7 @@ message File {
   string type = 7;
 
   bytes data = 8;
+  string url = 9;
 }
 
 service BillService {
