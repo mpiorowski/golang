@@ -195,6 +195,7 @@ message Supply {
   string userId = 5;
 
   string name = 6;
-  int32 amount = 7;
-  int32 priority = 8;
+  string category = 7;
+  int32 amount = 8;
+  int32 priority = 9;
 }
