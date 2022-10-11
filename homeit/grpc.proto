@@ -201,3 +201,42 @@ message Supply {
   int32 amount = 8;
   int32 priority = 9;
 }
+
+service EnergyService {
+  rpc GetTariifs(UserId) returns (stream Tariff) {}
+  rpc CreateTariff(Tariff) returns (Tariff) {}
+  rpc DeleteTariff(TariffId) returns (Tariff) {}
+}
+
+message TariffId {
+  string tariffId = 1;
+  string userId = 2;
+}
+
+message Tariff {
+  string id = 1;
+  string created = 2;
+  string updated = 3;
+  bool deleted = 4;
+
+  string userId = 5;
+
+  bool global = 6;
+  string name = 7;
+  repeated TariffSector sectors = 8;
+  repeated TariffPrice pricesPerKwh = 9;
+  repeated TariffPrice pricesPerMonth = 10;
+}
+
+message TariffSector {
+  string name = 1;
+  bool weekends = 2;
+  float stablePrice = 3;
+  float variablePrice = 4;
+  repeated string timeSector = 5;
+}
+
+message TariffPrice {
+  string name = 1;
+  float price = 2;
+}
