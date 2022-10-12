@@ -203,21 +203,39 @@ message Supply {
 }
 
 service EnergyService {
-  rpc GetTariifs(UserId) returns (stream Tariff) {}
+  rpc GetTariffs(UserId) returns (stream Tariff) {}
   rpc CreateTariff(Tariff) returns (Tariff) {}
   rpc DeleteTariff(TariffId) returns (Tariff) {}
+
+  rpc GetMeters(UserId) returns (stream Meter) {}
+  rpc CreateMeter(Meter) returns (Meter) {}
+  rpc DeleteMeter(MeterId) returns (Meter) {}
+
+  rpc GetMeasurements(MeterId) returns (stream Measurement) {}
+  rpc CreateMeasurement(Measurement) returns (Measurement) {}
+  rpc DeleteMeasurement(MeasurementId) returns (Measurement) {}
 }
 
 message TariffId {
-  string tariffId = 1;
-  string userId = 2;
+  string userId = 1;
+  string tariffId = 2;
+}
+
+message MeterId {
+  string userId = 1;
+  string meterId = 2;
+}
+
+message MeasurementId {
+  string userId = 1;
+  string measurementId = 2;
 }
 
 message Tariff {
   string id = 1;
   string created = 2;
   string updated = 3;
-  bool deleted = 4;
+  optional string deleted = 4;
 
   string userId = 5;
 
@@ -239,4 +257,28 @@ message TariffSector {
 message TariffPrice {
   string name = 1;
   float price = 2;
+}
+
+message Meter {
+  string id = 1;
+  string created = 2;
+  string updated = 3;
+  optional string deleted = 4;
+
+  string userId = 5;
+
+  string name = 6;
+}
+
+message Measurement {
+  string id = 1;
+  string created = 2;
+  string updated = 3;
+  optional string deleted = 4;
+
+  string userId = 5;
+  string meterId = 6;
+
+  float value = 7;
+  string date = 8;
 }
