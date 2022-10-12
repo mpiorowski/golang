@@ -237,7 +237,7 @@ message Tariff {
   string updated = 3;
   optional string deleted = 4;
 
-  string userId = 5;
+  optional string userId = 5;
 
   bool global = 6;
   string name = 7;
