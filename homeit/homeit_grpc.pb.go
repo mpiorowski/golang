@@ -1096,6 +1096,7 @@ var FoodService_ServiceDesc = grpc.ServiceDesc{
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type EnergyServiceClient interface {
 	GetTariffs(ctx context.Context, in *UserId, opts ...grpc.CallOption) (EnergyService_GetTariffsClient, error)
+	GetTariff(ctx context.Context, in *TariffId, opts ...grpc.CallOption) (*Tariff, error)
 	CreateTariff(ctx context.Context, in *Tariff, opts ...grpc.CallOption) (*Tariff, error)
 	DeleteTariff(ctx context.Context, in *TariffId, opts ...grpc.CallOption) (*Tariff, error)
 	GetMeters(ctx context.Context, in *UserId, opts ...grpc.CallOption) (EnergyService_GetMetersClient, error)
@@ -1144,6 +1145,15 @@ func (x *energyServiceGetTariffsClient) Recv() (*Tariff, error) {
 		return nil, err
 	}
 	return m, nil
+}
+
+func (c *energyServiceClient) GetTariff(ctx context.Context, in *TariffId, opts ...grpc.CallOption) (*Tariff, error) {
+	out := new(Tariff)
+	err := c.cc.Invoke(ctx, "/homeit.EnergyService/GetTariff", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *energyServiceClient) CreateTariff(ctx context.Context, in *Tariff, opts ...grpc.CallOption) (*Tariff, error) {
@@ -1269,6 +1279,7 @@ func (c *energyServiceClient) DeleteMeasurement(ctx context.Context, in *Measure
 // for forward compatibility
 type EnergyServiceServer interface {
 	GetTariffs(*UserId, EnergyService_GetTariffsServer) error
+	GetTariff(context.Context, *TariffId) (*Tariff, error)
 	CreateTariff(context.Context, *Tariff) (*Tariff, error)
 	DeleteTariff(context.Context, *TariffId) (*Tariff, error)
 	GetMeters(*UserId, EnergyService_GetMetersServer) error
@@ -1286,6 +1297,9 @@ type UnimplementedEnergyServiceServer struct {
 
 func (UnimplementedEnergyServiceServer) GetTariffs(*UserId, EnergyService_GetTariffsServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetTariffs not implemented")
+}
+func (UnimplementedEnergyServiceServer) GetTariff(context.Context, *TariffId) (*Tariff, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTariff not implemented")
 }
 func (UnimplementedEnergyServiceServer) CreateTariff(context.Context, *Tariff) (*Tariff, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateTariff not implemented")
@@ -1343,6 +1357,24 @@ type energyServiceGetTariffsServer struct {
 
 func (x *energyServiceGetTariffsServer) Send(m *Tariff) error {
 	return x.ServerStream.SendMsg(m)
+}
+
+func _EnergyService_GetTariff_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TariffId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EnergyServiceServer).GetTariff(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/homeit.EnergyService/GetTariff",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EnergyServiceServer).GetTariff(ctx, req.(*TariffId))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _EnergyService_CreateTariff_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -1502,6 +1534,10 @@ var EnergyService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "homeit.EnergyService",
 	HandlerType: (*EnergyServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetTariff",
+			Handler:    _EnergyService_GetTariff_Handler,
+		},
 		{
 			MethodName: "CreateTariff",
 			Handler:    _EnergyService_CreateTariff_Handler,

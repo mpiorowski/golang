@@ -204,6 +204,7 @@ message Supply {
 
 service EnergyService {
   rpc GetTariffs(UserId) returns (stream Tariff) {}
+  rpc GetTariff(TariffId) returns (Tariff) {}
   rpc CreateTariff(Tariff) returns (Tariff) {}
   rpc DeleteTariff(TariffId) returns (Tariff) {}
 
