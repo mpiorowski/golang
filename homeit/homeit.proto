@@ -209,12 +209,10 @@ service EnergyService {
   rpc DeleteTariff(TariffId) returns (Tariff) {}
 
   rpc GetMeters(UserId) returns (stream Meter) {}
-  rpc CreateMeter(Meter) returns (Meter) {}
-  rpc DeleteMeter(MeterId) returns (Meter) {}
 
   rpc GetMeasurements(MeterId) returns (stream Measurement) {}
-  rpc CreateMeasurement(Measurement) returns (Measurement) {}
-  rpc DeleteMeasurement(MeasurementId) returns (Measurement) {}
+
+  rpc GetEnergySectors(EnergySectorRequest) returns (stream EnergySectorResponse) {}
 }
 
 message TariffId {
@@ -280,6 +278,22 @@ message Measurement {
   string userId = 5;
   string meterId = 6;
 
-  float value = 7;
+  optional float value = 7;
   string date = 8;
 }
+
+message EnergySectorRequest {
+  string userId = 1;
+  string tariffId = 2;
+  string meterId = 3;
+  string dateFrom = 4;
+  string dateTo = 5;
+}
+
+message EnergySectorResponse {
+  string tariffId = 1;
+  string meterId = 2;
+  string name = 3;
+  float value = 4;
+}
+

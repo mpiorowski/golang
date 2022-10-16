@@ -1100,11 +1100,8 @@ type EnergyServiceClient interface {
 	CreateTariff(ctx context.Context, in *Tariff, opts ...grpc.CallOption) (*Tariff, error)
 	DeleteTariff(ctx context.Context, in *TariffId, opts ...grpc.CallOption) (*Tariff, error)
 	GetMeters(ctx context.Context, in *UserId, opts ...grpc.CallOption) (EnergyService_GetMetersClient, error)
-	CreateMeter(ctx context.Context, in *Meter, opts ...grpc.CallOption) (*Meter, error)
-	DeleteMeter(ctx context.Context, in *MeterId, opts ...grpc.CallOption) (*Meter, error)
 	GetMeasurements(ctx context.Context, in *MeterId, opts ...grpc.CallOption) (EnergyService_GetMeasurementsClient, error)
-	CreateMeasurement(ctx context.Context, in *Measurement, opts ...grpc.CallOption) (*Measurement, error)
-	DeleteMeasurement(ctx context.Context, in *MeasurementId, opts ...grpc.CallOption) (*Measurement, error)
+	GetEnergySectors(ctx context.Context, in *EnergySectorRequest, opts ...grpc.CallOption) (EnergyService_GetEnergySectorsClient, error)
 }
 
 type energyServiceClient struct {
@@ -1206,24 +1203,6 @@ func (x *energyServiceGetMetersClient) Recv() (*Meter, error) {
 	return m, nil
 }
 
-func (c *energyServiceClient) CreateMeter(ctx context.Context, in *Meter, opts ...grpc.CallOption) (*Meter, error) {
-	out := new(Meter)
-	err := c.cc.Invoke(ctx, "/homeit.EnergyService/CreateMeter", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *energyServiceClient) DeleteMeter(ctx context.Context, in *MeterId, opts ...grpc.CallOption) (*Meter, error) {
-	out := new(Meter)
-	err := c.cc.Invoke(ctx, "/homeit.EnergyService/DeleteMeter", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *energyServiceClient) GetMeasurements(ctx context.Context, in *MeterId, opts ...grpc.CallOption) (EnergyService_GetMeasurementsClient, error) {
 	stream, err := c.cc.NewStream(ctx, &EnergyService_ServiceDesc.Streams[2], "/homeit.EnergyService/GetMeasurements", opts...)
 	if err != nil {
@@ -1256,22 +1235,36 @@ func (x *energyServiceGetMeasurementsClient) Recv() (*Measurement, error) {
 	return m, nil
 }
 
-func (c *energyServiceClient) CreateMeasurement(ctx context.Context, in *Measurement, opts ...grpc.CallOption) (*Measurement, error) {
-	out := new(Measurement)
-	err := c.cc.Invoke(ctx, "/homeit.EnergyService/CreateMeasurement", in, out, opts...)
+func (c *energyServiceClient) GetEnergySectors(ctx context.Context, in *EnergySectorRequest, opts ...grpc.CallOption) (EnergyService_GetEnergySectorsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &EnergyService_ServiceDesc.Streams[3], "/homeit.EnergyService/GetEnergySectors", opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &energyServiceGetEnergySectorsClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
 }
 
-func (c *energyServiceClient) DeleteMeasurement(ctx context.Context, in *MeasurementId, opts ...grpc.CallOption) (*Measurement, error) {
-	out := new(Measurement)
-	err := c.cc.Invoke(ctx, "/homeit.EnergyService/DeleteMeasurement", in, out, opts...)
-	if err != nil {
+type EnergyService_GetEnergySectorsClient interface {
+	Recv() (*EnergySectorResponse, error)
+	grpc.ClientStream
+}
+
+type energyServiceGetEnergySectorsClient struct {
+	grpc.ClientStream
+}
+
+func (x *energyServiceGetEnergySectorsClient) Recv() (*EnergySectorResponse, error) {
+	m := new(EnergySectorResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
-	return out, nil
+	return m, nil
 }
 
 // EnergyServiceServer is the server API for EnergyService service.
@@ -1283,11 +1276,8 @@ type EnergyServiceServer interface {
 	CreateTariff(context.Context, *Tariff) (*Tariff, error)
 	DeleteTariff(context.Context, *TariffId) (*Tariff, error)
 	GetMeters(*UserId, EnergyService_GetMetersServer) error
-	CreateMeter(context.Context, *Meter) (*Meter, error)
-	DeleteMeter(context.Context, *MeterId) (*Meter, error)
 	GetMeasurements(*MeterId, EnergyService_GetMeasurementsServer) error
-	CreateMeasurement(context.Context, *Measurement) (*Measurement, error)
-	DeleteMeasurement(context.Context, *MeasurementId) (*Measurement, error)
+	GetEnergySectors(*EnergySectorRequest, EnergyService_GetEnergySectorsServer) error
 	mustEmbedUnimplementedEnergyServiceServer()
 }
 
@@ -1310,20 +1300,11 @@ func (UnimplementedEnergyServiceServer) DeleteTariff(context.Context, *TariffId)
 func (UnimplementedEnergyServiceServer) GetMeters(*UserId, EnergyService_GetMetersServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetMeters not implemented")
 }
-func (UnimplementedEnergyServiceServer) CreateMeter(context.Context, *Meter) (*Meter, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateMeter not implemented")
-}
-func (UnimplementedEnergyServiceServer) DeleteMeter(context.Context, *MeterId) (*Meter, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteMeter not implemented")
-}
 func (UnimplementedEnergyServiceServer) GetMeasurements(*MeterId, EnergyService_GetMeasurementsServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetMeasurements not implemented")
 }
-func (UnimplementedEnergyServiceServer) CreateMeasurement(context.Context, *Measurement) (*Measurement, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateMeasurement not implemented")
-}
-func (UnimplementedEnergyServiceServer) DeleteMeasurement(context.Context, *MeasurementId) (*Measurement, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteMeasurement not implemented")
+func (UnimplementedEnergyServiceServer) GetEnergySectors(*EnergySectorRequest, EnergyService_GetEnergySectorsServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetEnergySectors not implemented")
 }
 func (UnimplementedEnergyServiceServer) mustEmbedUnimplementedEnergyServiceServer() {}
 
@@ -1434,42 +1415,6 @@ func (x *energyServiceGetMetersServer) Send(m *Meter) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _EnergyService_CreateMeter_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Meter)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(EnergyServiceServer).CreateMeter(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/homeit.EnergyService/CreateMeter",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EnergyServiceServer).CreateMeter(ctx, req.(*Meter))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _EnergyService_DeleteMeter_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MeterId)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(EnergyServiceServer).DeleteMeter(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/homeit.EnergyService/DeleteMeter",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EnergyServiceServer).DeleteMeter(ctx, req.(*MeterId))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _EnergyService_GetMeasurements_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(MeterId)
 	if err := stream.RecvMsg(m); err != nil {
@@ -1491,40 +1436,25 @@ func (x *energyServiceGetMeasurementsServer) Send(m *Measurement) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _EnergyService_CreateMeasurement_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Measurement)
-	if err := dec(in); err != nil {
-		return nil, err
+func _EnergyService_GetEnergySectors_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(EnergySectorRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
 	}
-	if interceptor == nil {
-		return srv.(EnergyServiceServer).CreateMeasurement(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/homeit.EnergyService/CreateMeasurement",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EnergyServiceServer).CreateMeasurement(ctx, req.(*Measurement))
-	}
-	return interceptor(ctx, in, info, handler)
+	return srv.(EnergyServiceServer).GetEnergySectors(m, &energyServiceGetEnergySectorsServer{stream})
 }
 
-func _EnergyService_DeleteMeasurement_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MeasurementId)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(EnergyServiceServer).DeleteMeasurement(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/homeit.EnergyService/DeleteMeasurement",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EnergyServiceServer).DeleteMeasurement(ctx, req.(*MeasurementId))
-	}
-	return interceptor(ctx, in, info, handler)
+type EnergyService_GetEnergySectorsServer interface {
+	Send(*EnergySectorResponse) error
+	grpc.ServerStream
+}
+
+type energyServiceGetEnergySectorsServer struct {
+	grpc.ServerStream
+}
+
+func (x *energyServiceGetEnergySectorsServer) Send(m *EnergySectorResponse) error {
+	return x.ServerStream.SendMsg(m)
 }
 
 // EnergyService_ServiceDesc is the grpc.ServiceDesc for EnergyService service.
@@ -1546,22 +1476,6 @@ var EnergyService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "DeleteTariff",
 			Handler:    _EnergyService_DeleteTariff_Handler,
 		},
-		{
-			MethodName: "CreateMeter",
-			Handler:    _EnergyService_CreateMeter_Handler,
-		},
-		{
-			MethodName: "DeleteMeter",
-			Handler:    _EnergyService_DeleteMeter_Handler,
-		},
-		{
-			MethodName: "CreateMeasurement",
-			Handler:    _EnergyService_CreateMeasurement_Handler,
-		},
-		{
-			MethodName: "DeleteMeasurement",
-			Handler:    _EnergyService_DeleteMeasurement_Handler,
-		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
@@ -1577,6 +1491,11 @@ var EnergyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "GetMeasurements",
 			Handler:       _EnergyService_GetMeasurements_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "GetEnergySectors",
+			Handler:       _EnergyService_GetEnergySectors_Handler,
 			ServerStreams: true,
 		},
 	},
