@@ -248,14 +248,14 @@ message Tariff {
 message TariffSector {
   string name = 1;
   bool weekends = 2;
-  float stablePrice = 3;
-  float variablePrice = 4;
+  double stablePrice = 3;
+  double variablePrice = 4;
   repeated string timeSector = 5;
 }
 
 message TariffPrice {
   string name = 1;
-  float price = 2;
+  double price = 2;
 }
 
 message Meter {
@@ -275,11 +275,10 @@ message Measurement {
   string updated = 3;
   optional string deleted = 4;
 
-  string userId = 5;
-  string meterId = 6;
+  string meterId = 5;
 
-  optional float value = 7;
-  string date = 8;
+  optional double value = 6;
+  string date = 7;
 }
 
 message EnergySectorRequest {
@@ -294,6 +293,6 @@ message EnergySectorResponse {
   string tariffId = 1;
   string meterId = 2;
   string name = 3;
-  float value = 4;
+  double value = 4;
 }
 
