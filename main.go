@@ -6,6 +6,12 @@ import (
 	"time"
 )
 
+type Email struct {
+	To       string
+	Template string
+	Html     []string
+}
+
 func ContainsString(s []string, str string) bool {
 	for _, v := range s {
 		if v == str {
