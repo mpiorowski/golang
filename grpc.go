@@ -66,7 +66,7 @@ func Connect(env string, host string, redisHost string, redisPass string) (*grpc
 	// Create a TLS credentials object with the certificate authority.
 	host = fmt.Sprintf("%s:443", host)
 
-  // For local development use insecure credentials
+	// For local development use insecure credentials
 	if env != "production" {
 		conn, err := grpc.Dial(host, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {

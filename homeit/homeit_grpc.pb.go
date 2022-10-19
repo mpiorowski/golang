@@ -912,6 +912,15 @@ type FoodServiceClient interface {
 	GetSupplies(ctx context.Context, in *UserId, opts ...grpc.CallOption) (FoodService_GetSuppliesClient, error)
 	CreateSupply(ctx context.Context, in *Supply, opts ...grpc.CallOption) (*Supply, error)
 	DeleteSupply(ctx context.Context, in *SupplyId, opts ...grpc.CallOption) (*Supply, error)
+	GetMenus(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (FoodService_GetMenusClient, error)
+	CreateMenu(ctx context.Context, in *Menu, opts ...grpc.CallOption) (*Menu, error)
+	DeleteMenu(ctx context.Context, in *MenuId, opts ...grpc.CallOption) (*Menu, error)
+	GetRecipes(ctx context.Context, in *UserId, opts ...grpc.CallOption) (FoodService_GetRecipesClient, error)
+	CreateRecipe(ctx context.Context, in *Recipe, opts ...grpc.CallOption) (*Recipe, error)
+	DeleteRecipe(ctx context.Context, in *RecipeId, opts ...grpc.CallOption) (*Recipe, error)
+	GetIngredients(ctx context.Context, in *UserId, opts ...grpc.CallOption) (FoodService_GetIngredientsClient, error)
+	CreateIngredient(ctx context.Context, in *Ingredient, opts ...grpc.CallOption) (*Ingredient, error)
+	DeleteIngredient(ctx context.Context, in *IngredientId, opts ...grpc.CallOption) (*Ingredient, error)
 }
 
 type foodServiceClient struct {
@@ -972,6 +981,156 @@ func (c *foodServiceClient) DeleteSupply(ctx context.Context, in *SupplyId, opts
 	return out, nil
 }
 
+func (c *foodServiceClient) GetMenus(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (FoodService_GetMenusClient, error) {
+	stream, err := c.cc.NewStream(ctx, &FoodService_ServiceDesc.Streams[1], "/homeit.FoodService/GetMenus", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &foodServiceGetMenusClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type FoodService_GetMenusClient interface {
+	Recv() (*Menu, error)
+	grpc.ClientStream
+}
+
+type foodServiceGetMenusClient struct {
+	grpc.ClientStream
+}
+
+func (x *foodServiceGetMenusClient) Recv() (*Menu, error) {
+	m := new(Menu)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *foodServiceClient) CreateMenu(ctx context.Context, in *Menu, opts ...grpc.CallOption) (*Menu, error) {
+	out := new(Menu)
+	err := c.cc.Invoke(ctx, "/homeit.FoodService/CreateMenu", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *foodServiceClient) DeleteMenu(ctx context.Context, in *MenuId, opts ...grpc.CallOption) (*Menu, error) {
+	out := new(Menu)
+	err := c.cc.Invoke(ctx, "/homeit.FoodService/DeleteMenu", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *foodServiceClient) GetRecipes(ctx context.Context, in *UserId, opts ...grpc.CallOption) (FoodService_GetRecipesClient, error) {
+	stream, err := c.cc.NewStream(ctx, &FoodService_ServiceDesc.Streams[2], "/homeit.FoodService/GetRecipes", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &foodServiceGetRecipesClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type FoodService_GetRecipesClient interface {
+	Recv() (*Recipe, error)
+	grpc.ClientStream
+}
+
+type foodServiceGetRecipesClient struct {
+	grpc.ClientStream
+}
+
+func (x *foodServiceGetRecipesClient) Recv() (*Recipe, error) {
+	m := new(Recipe)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *foodServiceClient) CreateRecipe(ctx context.Context, in *Recipe, opts ...grpc.CallOption) (*Recipe, error) {
+	out := new(Recipe)
+	err := c.cc.Invoke(ctx, "/homeit.FoodService/CreateRecipe", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *foodServiceClient) DeleteRecipe(ctx context.Context, in *RecipeId, opts ...grpc.CallOption) (*Recipe, error) {
+	out := new(Recipe)
+	err := c.cc.Invoke(ctx, "/homeit.FoodService/DeleteRecipe", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *foodServiceClient) GetIngredients(ctx context.Context, in *UserId, opts ...grpc.CallOption) (FoodService_GetIngredientsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &FoodService_ServiceDesc.Streams[3], "/homeit.FoodService/GetIngredients", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &foodServiceGetIngredientsClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type FoodService_GetIngredientsClient interface {
+	Recv() (*Ingredient, error)
+	grpc.ClientStream
+}
+
+type foodServiceGetIngredientsClient struct {
+	grpc.ClientStream
+}
+
+func (x *foodServiceGetIngredientsClient) Recv() (*Ingredient, error) {
+	m := new(Ingredient)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *foodServiceClient) CreateIngredient(ctx context.Context, in *Ingredient, opts ...grpc.CallOption) (*Ingredient, error) {
+	out := new(Ingredient)
+	err := c.cc.Invoke(ctx, "/homeit.FoodService/CreateIngredient", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *foodServiceClient) DeleteIngredient(ctx context.Context, in *IngredientId, opts ...grpc.CallOption) (*Ingredient, error) {
+	out := new(Ingredient)
+	err := c.cc.Invoke(ctx, "/homeit.FoodService/DeleteIngredient", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FoodServiceServer is the server API for FoodService service.
 // All implementations must embed UnimplementedFoodServiceServer
 // for forward compatibility
@@ -979,6 +1138,15 @@ type FoodServiceServer interface {
 	GetSupplies(*UserId, FoodService_GetSuppliesServer) error
 	CreateSupply(context.Context, *Supply) (*Supply, error)
 	DeleteSupply(context.Context, *SupplyId) (*Supply, error)
+	GetMenus(*MenuRequest, FoodService_GetMenusServer) error
+	CreateMenu(context.Context, *Menu) (*Menu, error)
+	DeleteMenu(context.Context, *MenuId) (*Menu, error)
+	GetRecipes(*UserId, FoodService_GetRecipesServer) error
+	CreateRecipe(context.Context, *Recipe) (*Recipe, error)
+	DeleteRecipe(context.Context, *RecipeId) (*Recipe, error)
+	GetIngredients(*UserId, FoodService_GetIngredientsServer) error
+	CreateIngredient(context.Context, *Ingredient) (*Ingredient, error)
+	DeleteIngredient(context.Context, *IngredientId) (*Ingredient, error)
 	mustEmbedUnimplementedFoodServiceServer()
 }
 
@@ -994,6 +1162,33 @@ func (UnimplementedFoodServiceServer) CreateSupply(context.Context, *Supply) (*S
 }
 func (UnimplementedFoodServiceServer) DeleteSupply(context.Context, *SupplyId) (*Supply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteSupply not implemented")
+}
+func (UnimplementedFoodServiceServer) GetMenus(*MenuRequest, FoodService_GetMenusServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetMenus not implemented")
+}
+func (UnimplementedFoodServiceServer) CreateMenu(context.Context, *Menu) (*Menu, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateMenu not implemented")
+}
+func (UnimplementedFoodServiceServer) DeleteMenu(context.Context, *MenuId) (*Menu, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteMenu not implemented")
+}
+func (UnimplementedFoodServiceServer) GetRecipes(*UserId, FoodService_GetRecipesServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetRecipes not implemented")
+}
+func (UnimplementedFoodServiceServer) CreateRecipe(context.Context, *Recipe) (*Recipe, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateRecipe not implemented")
+}
+func (UnimplementedFoodServiceServer) DeleteRecipe(context.Context, *RecipeId) (*Recipe, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteRecipe not implemented")
+}
+func (UnimplementedFoodServiceServer) GetIngredients(*UserId, FoodService_GetIngredientsServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetIngredients not implemented")
+}
+func (UnimplementedFoodServiceServer) CreateIngredient(context.Context, *Ingredient) (*Ingredient, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateIngredient not implemented")
+}
+func (UnimplementedFoodServiceServer) DeleteIngredient(context.Context, *IngredientId) (*Ingredient, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteIngredient not implemented")
 }
 func (UnimplementedFoodServiceServer) mustEmbedUnimplementedFoodServiceServer() {}
 
@@ -1065,6 +1260,177 @@ func _FoodService_DeleteSupply_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FoodService_GetMenus_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(MenuRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(FoodServiceServer).GetMenus(m, &foodServiceGetMenusServer{stream})
+}
+
+type FoodService_GetMenusServer interface {
+	Send(*Menu) error
+	grpc.ServerStream
+}
+
+type foodServiceGetMenusServer struct {
+	grpc.ServerStream
+}
+
+func (x *foodServiceGetMenusServer) Send(m *Menu) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _FoodService_CreateMenu_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Menu)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FoodServiceServer).CreateMenu(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/homeit.FoodService/CreateMenu",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FoodServiceServer).CreateMenu(ctx, req.(*Menu))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _FoodService_DeleteMenu_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MenuId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FoodServiceServer).DeleteMenu(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/homeit.FoodService/DeleteMenu",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FoodServiceServer).DeleteMenu(ctx, req.(*MenuId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _FoodService_GetRecipes_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(UserId)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(FoodServiceServer).GetRecipes(m, &foodServiceGetRecipesServer{stream})
+}
+
+type FoodService_GetRecipesServer interface {
+	Send(*Recipe) error
+	grpc.ServerStream
+}
+
+type foodServiceGetRecipesServer struct {
+	grpc.ServerStream
+}
+
+func (x *foodServiceGetRecipesServer) Send(m *Recipe) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _FoodService_CreateRecipe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Recipe)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FoodServiceServer).CreateRecipe(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/homeit.FoodService/CreateRecipe",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FoodServiceServer).CreateRecipe(ctx, req.(*Recipe))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _FoodService_DeleteRecipe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RecipeId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FoodServiceServer).DeleteRecipe(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/homeit.FoodService/DeleteRecipe",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FoodServiceServer).DeleteRecipe(ctx, req.(*RecipeId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _FoodService_GetIngredients_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(UserId)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(FoodServiceServer).GetIngredients(m, &foodServiceGetIngredientsServer{stream})
+}
+
+type FoodService_GetIngredientsServer interface {
+	Send(*Ingredient) error
+	grpc.ServerStream
+}
+
+type foodServiceGetIngredientsServer struct {
+	grpc.ServerStream
+}
+
+func (x *foodServiceGetIngredientsServer) Send(m *Ingredient) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _FoodService_CreateIngredient_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Ingredient)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FoodServiceServer).CreateIngredient(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/homeit.FoodService/CreateIngredient",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FoodServiceServer).CreateIngredient(ctx, req.(*Ingredient))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _FoodService_DeleteIngredient_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IngredientId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FoodServiceServer).DeleteIngredient(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/homeit.FoodService/DeleteIngredient",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FoodServiceServer).DeleteIngredient(ctx, req.(*IngredientId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FoodService_ServiceDesc is the grpc.ServiceDesc for FoodService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1080,11 +1446,50 @@ var FoodService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "DeleteSupply",
 			Handler:    _FoodService_DeleteSupply_Handler,
 		},
+		{
+			MethodName: "CreateMenu",
+			Handler:    _FoodService_CreateMenu_Handler,
+		},
+		{
+			MethodName: "DeleteMenu",
+			Handler:    _FoodService_DeleteMenu_Handler,
+		},
+		{
+			MethodName: "CreateRecipe",
+			Handler:    _FoodService_CreateRecipe_Handler,
+		},
+		{
+			MethodName: "DeleteRecipe",
+			Handler:    _FoodService_DeleteRecipe_Handler,
+		},
+		{
+			MethodName: "CreateIngredient",
+			Handler:    _FoodService_CreateIngredient_Handler,
+		},
+		{
+			MethodName: "DeleteIngredient",
+			Handler:    _FoodService_DeleteIngredient_Handler,
+		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "GetSupplies",
 			Handler:       _FoodService_GetSupplies_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "GetMenus",
+			Handler:       _FoodService_GetMenus_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "GetRecipes",
+			Handler:       _FoodService_GetRecipes_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "GetIngredients",
+			Handler:       _FoodService_GetIngredients_Handler,
 			ServerStreams: true,
 		},
 	},

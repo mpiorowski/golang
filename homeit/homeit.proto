@@ -181,6 +181,18 @@ service FoodService {
   rpc GetSupplies(UserId) returns (stream Supply) {}
   rpc CreateSupply(Supply) returns (Supply) {}
   rpc DeleteSupply(SupplyId) returns (Supply) {}
+
+  rpc GetMenus(MenuRequest) returns (stream Menu) {}
+  rpc CreateMenu(Menu) returns (Menu) {}
+  rpc DeleteMenu(MenuId) returns (Menu) {}
+
+  rpc GetRecipes(UserId) returns (stream Recipe) {}
+  rpc CreateRecipe(Recipe) returns (Recipe) {}
+  rpc DeleteRecipe(RecipeId) returns (Recipe) {}
+
+  rpc GetIngredients(UserId) returns (stream Ingredient) {}
+  rpc CreateIngredient(Ingredient) returns (Ingredient) {}
+  rpc DeleteIngredient(IngredientId) returns (Ingredient) {}
 }
 
 message SupplyId {
@@ -200,6 +212,65 @@ message Supply {
   string category = 7;
   int32 amount = 8;
   int32 priority = 9;
+}
+
+message MenuId {
+  string menuId = 1;
+  string userId = 2;
+}
+
+message MenuRequest {
+  string userId = 1;
+  string date = 2;
+}
+
+message Menu {
+  string id = 1;
+  string created = 2;
+  string updated = 3;
+  optional string deleted = 4;
+
+  string userId = 5;
+  string recipeId = 6;
+
+  string date = 7;
+  string type = 8;
+}
+
+message RecipeId {
+  string recipeId = 1;
+  string userId = 2;
+}
+
+message Recipe {
+  string id = 1;
+  string created = 2;
+  string updated = 3;
+  optional string deleted = 4;
+
+  string userId = 5;
+
+  string name = 6;
+  string description = 7;
+  string category = 8;
+}
+
+message IngredientId {
+  string ingredientId = 1;
+  string userId = 2;
+}
+
+message Ingredient {
+  string id = 1;
+  string created = 2;
+  string updated = 3;
+  optional string deleted = 4;
+
+  string userId = 5;
+  string recipeId = 6;
+
+  string name = 7;
+  double amount = 8;
 }
 
 service EnergyService {
@@ -295,4 +366,3 @@ message EnergySectorResponse {
   string name = 3;
   double value = 4;
 }
-

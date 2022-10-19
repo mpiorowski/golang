@@ -1,10 +1,10 @@
 package utils
 
 import (
-	"context"
-	"log"
 	"cloud.google.com/go/pubsub"
+	"context"
 	"github.com/gin-gonic/gin"
+	"log"
 )
 
 func PublishPubSub(projectId, topicId, msg string) error {
@@ -38,13 +38,14 @@ type PubSubMessage struct {
 	} `json:"message"`
 	Subscription string `json:"subscription"`
 }
-func SubscribePubSub(c* gin.Context) (PubSubMessage, error) {
+
+func SubscribePubSub(c *gin.Context) (PubSubMessage, error) {
 	var message PubSubMessage
 	err := c.BindJSON(&message)
 	if err != nil {
 		log.Printf("c.BindJSON: %v", err)
 		return message, err
 	}
-  log.Printf("Got message: %v", string(message.Message.Data))
-  return message, nil
+	log.Printf("Got message: %v", string(message.Message.Data))
+	return message, nil
 }
