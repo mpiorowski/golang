@@ -235,6 +235,8 @@ message Menu {
 
   string date = 7;
   string type = 8;
+
+  Recipe recipe = 9;
 }
 
 message RecipeId {
@@ -253,6 +255,8 @@ message Recipe {
   string name = 6;
   string description = 7;
   string category = 8;
+
+  repeated Ingredient ingredients = 9;
 }
 
 message IngredientId {
