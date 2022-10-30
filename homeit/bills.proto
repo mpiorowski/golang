@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package bills;
+
+option go_package = "github.com/mpiorowski/golang/homeit";
+option java_multiple_files = true;
+option java_outer_classname = "HomeItProto";
+option java_package = "io.grpc.homeit.proto";
+
+enum BillCategory {
+  HOUSE = 0;
+  WORK = 1;
+  COMPANY = 2;
+  OTHER = 3;
+  ACCOUNT = 4;
+  ADDITIONAL = 5;
+}
+enum BillFrequency {
+  MONTH = 0;
+  TWO_MONTHS = 1;
+  THREE_MONTHS = 2;
+  HALF_YEAR = 3;
+  YEAR = 4;
+  NONE = 5;
+}
+
+message BillId {
+  string billId = 1;
+  string userId = 2;
+}
+message PaymentId {
+  string paymentId = 1;
+  string userId = 2;
+}
+message Bill {
+  string id = 1;
+  string created = 2;
+  string updated = 3;
+  bool deleted = 4;
+
+  string userId = 5;
+
+  string name = 6;
+  string category = 7;
+  string frequency = 8;
+  optional bool income = 9;
+  optional bool qrCode = 10;
+
+  optional float defaultValue = 11;
+  optional string defaultAccountNumber = 12;
+  optional string defaultAccountReciever = 13;
+  optional string defaultAccountDescription = 14;
+
+  optional bool isPayed = 15;
+}
+
+message Payment {
+  string id = 1;
+  string created = 2;
+  string updated = 3;
+  bool deleted = 4;
+
+  string userId = 5;
+  string billId = 6;
+
+  float value = 7;
+  string date = 8;
+  optional string accountNumber = 9;
+  optional string accountReciever = 10;
+  optional string accountDescription = 11;
+}
+
+message Saving {
+  string billId = 1;
+  string billCategory = 2;
+  string billName = 3;
+  optional bool billIncome = 4;
+  optional float previousMonth = 5;
+  optional float currentMonth = 6;
+}
+

@@ -912,8 +912,9 @@ type FoodServiceClient interface {
 	GetSupplies(ctx context.Context, in *UserId, opts ...grpc.CallOption) (FoodService_GetSuppliesClient, error)
 	CreateSupply(ctx context.Context, in *Supply, opts ...grpc.CallOption) (*Supply, error)
 	DeleteSupply(ctx context.Context, in *SupplyId, opts ...grpc.CallOption) (*Supply, error)
-	GetMenus(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (FoodService_GetMenusClient, error)
+	GetMenus(ctx context.Context, in *Menu, opts ...grpc.CallOption) (FoodService_GetMenusClient, error)
 	CreateMenu(ctx context.Context, in *Menu, opts ...grpc.CallOption) (*Menu, error)
+	CopyMenu(ctx context.Context, in *CopyMenuRequest, opts ...grpc.CallOption) (*CopyMenuResponse, error)
 	DeleteMenu(ctx context.Context, in *MenuId, opts ...grpc.CallOption) (*Menu, error)
 	GetRecipes(ctx context.Context, in *UserId, opts ...grpc.CallOption) (FoodService_GetRecipesClient, error)
 	CreateRecipe(ctx context.Context, in *Recipe, opts ...grpc.CallOption) (*Recipe, error)
@@ -981,7 +982,7 @@ func (c *foodServiceClient) DeleteSupply(ctx context.Context, in *SupplyId, opts
 	return out, nil
 }
 
-func (c *foodServiceClient) GetMenus(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (FoodService_GetMenusClient, error) {
+func (c *foodServiceClient) GetMenus(ctx context.Context, in *Menu, opts ...grpc.CallOption) (FoodService_GetMenusClient, error) {
 	stream, err := c.cc.NewStream(ctx, &FoodService_ServiceDesc.Streams[1], "/homeit.FoodService/GetMenus", opts...)
 	if err != nil {
 		return nil, err
@@ -1016,6 +1017,15 @@ func (x *foodServiceGetMenusClient) Recv() (*Menu, error) {
 func (c *foodServiceClient) CreateMenu(ctx context.Context, in *Menu, opts ...grpc.CallOption) (*Menu, error) {
 	out := new(Menu)
 	err := c.cc.Invoke(ctx, "/homeit.FoodService/CreateMenu", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *foodServiceClient) CopyMenu(ctx context.Context, in *CopyMenuRequest, opts ...grpc.CallOption) (*CopyMenuResponse, error) {
+	out := new(CopyMenuResponse)
+	err := c.cc.Invoke(ctx, "/homeit.FoodService/CopyMenu", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1138,8 +1148,9 @@ type FoodServiceServer interface {
 	GetSupplies(*UserId, FoodService_GetSuppliesServer) error
 	CreateSupply(context.Context, *Supply) (*Supply, error)
 	DeleteSupply(context.Context, *SupplyId) (*Supply, error)
-	GetMenus(*MenuRequest, FoodService_GetMenusServer) error
+	GetMenus(*Menu, FoodService_GetMenusServer) error
 	CreateMenu(context.Context, *Menu) (*Menu, error)
+	CopyMenu(context.Context, *CopyMenuRequest) (*CopyMenuResponse, error)
 	DeleteMenu(context.Context, *MenuId) (*Menu, error)
 	GetRecipes(*UserId, FoodService_GetRecipesServer) error
 	CreateRecipe(context.Context, *Recipe) (*Recipe, error)
@@ -1163,11 +1174,14 @@ func (UnimplementedFoodServiceServer) CreateSupply(context.Context, *Supply) (*S
 func (UnimplementedFoodServiceServer) DeleteSupply(context.Context, *SupplyId) (*Supply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteSupply not implemented")
 }
-func (UnimplementedFoodServiceServer) GetMenus(*MenuRequest, FoodService_GetMenusServer) error {
+func (UnimplementedFoodServiceServer) GetMenus(*Menu, FoodService_GetMenusServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetMenus not implemented")
 }
 func (UnimplementedFoodServiceServer) CreateMenu(context.Context, *Menu) (*Menu, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateMenu not implemented")
+}
+func (UnimplementedFoodServiceServer) CopyMenu(context.Context, *CopyMenuRequest) (*CopyMenuResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CopyMenu not implemented")
 }
 func (UnimplementedFoodServiceServer) DeleteMenu(context.Context, *MenuId) (*Menu, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteMenu not implemented")
@@ -1261,7 +1275,7 @@ func _FoodService_DeleteSupply_Handler(srv interface{}, ctx context.Context, dec
 }
 
 func _FoodService_GetMenus_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(MenuRequest)
+	m := new(Menu)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
@@ -1295,6 +1309,24 @@ func _FoodService_CreateMenu_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(FoodServiceServer).CreateMenu(ctx, req.(*Menu))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _FoodService_CopyMenu_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CopyMenuRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FoodServiceServer).CopyMenu(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/homeit.FoodService/CopyMenu",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FoodServiceServer).CopyMenu(ctx, req.(*CopyMenuRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1449,6 +1481,10 @@ var FoodService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateMenu",
 			Handler:    _FoodService_CreateMenu_Handler,
+		},
+		{
+			MethodName: "CopyMenu",
+			Handler:    _FoodService_CopyMenu_Handler,
 		},
 		{
 			MethodName: "DeleteMenu",

@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+package energy;
+
+option go_package = "github.com/mpiorowski/golang/homeit";
+option java_multiple_files = true;
+option java_outer_classname = "HomeItProto";
+option java_package = "io.grpc.homeit.proto";
+
+message TariffId {
+  string userId = 1;
+  string tariffId = 2;
+}
+
+message MeterId {
+  string userId = 1;
+  string meterId = 2;
+}
+
+message MeasurementId {
+  string userId = 1;
+  string measurementId = 2;
+}
+
+message Tariff {
+  string id = 1;
+  string created = 2;
+  string updated = 3;
+  optional string deleted = 4;
+
+  optional string userId = 5;
+
+  bool global = 6;
+  string name = 7;
+  repeated TariffSector sectors = 8;
+  repeated TariffPrice pricesPerKwh = 9;
+  repeated TariffPrice pricesPerMonth = 10;
+}
+
+message TariffSector {
+  string name = 1;
+  bool weekends = 2;
+  double stablePrice = 3;
+  double variablePrice = 4;
+  repeated string timeSector = 5;
+}
+
+message TariffPrice {
+  string name = 1;
+  double price = 2;
+}
+
+message Meter {
+  string id = 1;
+  string created = 2;
+  string updated = 3;
+  optional string deleted = 4;
+
+  string userId = 5;
+
+  string name = 6;
+}
+
+message Measurement {
+  string id = 1;
+  string created = 2;
+  string updated = 3;
+  optional string deleted = 4;
+
+  string meterId = 5;
+
+  optional double value = 6;
+  string date = 7;
+}
+
+message EnergySectorRequest {
+  string userId = 1;
+  string tariffId = 2;
+  string meterId = 3;
+  string dateFrom = 4;
+  string dateTo = 5;
+}
+
+message EnergySectorResponse {
+  string tariffId = 1;
+  string meterId = 2;
+  string name = 3;
+  double value = 4;
+}
