@@ -59,7 +59,7 @@ service FoodService {
 }
 
 message CopyMenuRequest {
-  food.MenuId menu_id = 1;
+  food.MenuId menuId = 1;
   repeated string days = 2;
 }
 
