@@ -912,7 +912,7 @@ type FoodServiceClient interface {
 	GetSupplies(ctx context.Context, in *UserId, opts ...grpc.CallOption) (FoodService_GetSuppliesClient, error)
 	CreateSupply(ctx context.Context, in *Supply, opts ...grpc.CallOption) (*Supply, error)
 	DeleteSupply(ctx context.Context, in *SupplyId, opts ...grpc.CallOption) (*Supply, error)
-	GetMenus(ctx context.Context, in *Menu, opts ...grpc.CallOption) (FoodService_GetMenusClient, error)
+	GetMenus(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (FoodService_GetMenusClient, error)
 	CreateMenu(ctx context.Context, in *Menu, opts ...grpc.CallOption) (*Menu, error)
 	CopyMenu(ctx context.Context, in *CopyMenuRequest, opts ...grpc.CallOption) (*CopyMenuResponse, error)
 	DeleteMenu(ctx context.Context, in *MenuId, opts ...grpc.CallOption) (*Menu, error)
@@ -982,7 +982,7 @@ func (c *foodServiceClient) DeleteSupply(ctx context.Context, in *SupplyId, opts
 	return out, nil
 }
 
-func (c *foodServiceClient) GetMenus(ctx context.Context, in *Menu, opts ...grpc.CallOption) (FoodService_GetMenusClient, error) {
+func (c *foodServiceClient) GetMenus(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (FoodService_GetMenusClient, error) {
 	stream, err := c.cc.NewStream(ctx, &FoodService_ServiceDesc.Streams[1], "/homeit.FoodService/GetMenus", opts...)
 	if err != nil {
 		return nil, err
@@ -1148,7 +1148,7 @@ type FoodServiceServer interface {
 	GetSupplies(*UserId, FoodService_GetSuppliesServer) error
 	CreateSupply(context.Context, *Supply) (*Supply, error)
 	DeleteSupply(context.Context, *SupplyId) (*Supply, error)
-	GetMenus(*Menu, FoodService_GetMenusServer) error
+	GetMenus(*MenuRequest, FoodService_GetMenusServer) error
 	CreateMenu(context.Context, *Menu) (*Menu, error)
 	CopyMenu(context.Context, *CopyMenuRequest) (*CopyMenuResponse, error)
 	DeleteMenu(context.Context, *MenuId) (*Menu, error)
@@ -1174,7 +1174,7 @@ func (UnimplementedFoodServiceServer) CreateSupply(context.Context, *Supply) (*S
 func (UnimplementedFoodServiceServer) DeleteSupply(context.Context, *SupplyId) (*Supply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteSupply not implemented")
 }
-func (UnimplementedFoodServiceServer) GetMenus(*Menu, FoodService_GetMenusServer) error {
+func (UnimplementedFoodServiceServer) GetMenus(*MenuRequest, FoodService_GetMenusServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetMenus not implemented")
 }
 func (UnimplementedFoodServiceServer) CreateMenu(context.Context, *Menu) (*Menu, error) {
@@ -1275,7 +1275,7 @@ func _FoodService_DeleteSupply_Handler(srv interface{}, ctx context.Context, dec
 }
 
 func _FoodService_GetMenus_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(Menu)
+	m := new(MenuRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}

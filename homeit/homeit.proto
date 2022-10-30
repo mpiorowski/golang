@@ -44,7 +44,7 @@ service FoodService {
   rpc CreateSupply(food.Supply) returns (food.Supply) {}
   rpc DeleteSupply(food.SupplyId) returns (food.Supply) {}
 
-  rpc GetMenus(food.Menu) returns (stream food.Menu) {}
+  rpc GetMenus(food.MenuRequest) returns (stream food.Menu) {}
   rpc CreateMenu(food.Menu) returns (food.Menu) {}
   rpc CopyMenu(CopyMenuRequest) returns (CopyMenuResponse) {}
   rpc DeleteMenu(food.MenuId) returns (food.Menu) {}
