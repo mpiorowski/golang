@@ -32,11 +32,6 @@ message MenuId {
   string userId = 2;
 }
 
-message MenuRequest {
-  string userId = 1;
-  string date = 2;
-}
-
 message Menu {
   string id = 1;
   string created = 2;

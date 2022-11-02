@@ -44,7 +44,7 @@ service FoodService {
   rpc CreateSupply(food.Supply) returns (food.Supply) {}
   rpc DeleteSupply(food.SupplyId) returns (food.Supply) {}
 
-  rpc GetMenus(food.MenuRequest) returns (stream food.Menu) {}
+  rpc GetMenus(MenuRequest) returns (stream food.Menu) {}
   rpc CreateMenu(food.Menu) returns (food.Menu) {}
   rpc CopyMenu(CopyMenuRequest) returns (CopyMenuResponse) {}
   rpc DeleteMenu(food.MenuId) returns (food.Menu) {}
@@ -58,6 +58,10 @@ service FoodService {
   rpc DeleteIngredient(food.IngredientId) returns (food.Ingredient) {}
 }
 
+message MenuRequest {
+  string userId = 1;
+  repeated string days = 2;
+}
 message CopyMenuRequest {
   food.MenuId menuId = 1;
   repeated string days = 2;
