@@ -1,16 +1,12 @@
 syntax = "proto3";
 
-package base;
+package users;
 
 option go_package = "github.com/mpiorowski/golang/homeit";
 option java_multiple_files = true;
 option java_outer_classname = "HomeItProto";
 option java_package = "io.grpc.homeit.proto";
 
-message Empty {}
-message UserId {
-  string user_id = 1;
-}
 
 message TokenRequest {
   string email = 1;
@@ -53,27 +49,7 @@ message User {
   string email = 5;
   string role = 6;
   string lastLogin = 7;
+
+  string firebaseUid = 8;
 }
 
-message TargetId {
-  string targetId = 1;
-}
-
-message FileId {
-  string fileId = 1;
-  string targetId = 2;
-}
-
-message File {
-  string id = 1;
-  string created = 2;
-  string updated = 3;
-  bool deleted = 4;
-
-  string targetId = 5;
-  string name = 6;
-  string type = 7;
-
-  bytes data = 8;
-  string url = 9;
-}
