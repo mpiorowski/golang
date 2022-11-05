@@ -50,6 +50,6 @@ message User {
   string role = 6;
   string lastLogin = 7;
 
-  string firebaseUid = 8;
+  string uid = 8;
 }
 

@@ -50,7 +50,7 @@ service UsersService {
 }
 
 message GetUserRequest {
-  string firebaseUid = 1;
+  string uid = 1;
 }
 message GetUserResponse {
   users.User user = 1;
