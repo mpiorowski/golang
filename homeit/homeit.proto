@@ -45,11 +45,11 @@ service UsersService {
   rpc Login(users.LoginRequest) returns (users.Session) {}
 
   rpc GetUsers(Empty) returns (stream users.User) {}
-  rpc GetUser(GetUsersRequest) returns (GetUserResponse) {}
+  rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
   rpc CreateUser(stream users.User) returns (stream users.User) {}
 }
 
-message GetUsersRequest {
+message GetUserRequest {
   string firebaseUid = 1;
 }
 message GetUserResponse {

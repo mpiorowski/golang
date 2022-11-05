@@ -25,7 +25,7 @@ type UsersServiceClient interface {
 	CreateToken(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*Token, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*Session, error)
 	GetUsers(ctx context.Context, in *Empty, opts ...grpc.CallOption) (UsersService_GetUsersClient, error)
-	GetUser(ctx context.Context, in *GetUsersRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
+	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
 	CreateUser(ctx context.Context, opts ...grpc.CallOption) (UsersService_CreateUserClient, error)
 }
 
@@ -87,7 +87,7 @@ func (x *usersServiceGetUsersClient) Recv() (*User, error) {
 	return m, nil
 }
 
-func (c *usersServiceClient) GetUser(ctx context.Context, in *GetUsersRequest, opts ...grpc.CallOption) (*GetUserResponse, error) {
+func (c *usersServiceClient) GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error) {
 	out := new(GetUserResponse)
 	err := c.cc.Invoke(ctx, "/homeit.UsersService/GetUser", in, out, opts...)
 	if err != nil {
@@ -134,7 +134,7 @@ type UsersServiceServer interface {
 	CreateToken(context.Context, *TokenRequest) (*Token, error)
 	Login(context.Context, *LoginRequest) (*Session, error)
 	GetUsers(*Empty, UsersService_GetUsersServer) error
-	GetUser(context.Context, *GetUsersRequest) (*GetUserResponse, error)
+	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
 	CreateUser(UsersService_CreateUserServer) error
 	mustEmbedUnimplementedUsersServiceServer()
 }
@@ -152,7 +152,7 @@ func (UnimplementedUsersServiceServer) Login(context.Context, *LoginRequest) (*S
 func (UnimplementedUsersServiceServer) GetUsers(*Empty, UsersService_GetUsersServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetUsers not implemented")
 }
-func (UnimplementedUsersServiceServer) GetUser(context.Context, *GetUsersRequest) (*GetUserResponse, error) {
+func (UnimplementedUsersServiceServer) GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
 }
 func (UnimplementedUsersServiceServer) CreateUser(UsersService_CreateUserServer) error {
@@ -229,7 +229,7 @@ func (x *usersServiceGetUsersServer) Send(m *User) error {
 }
 
 func _UsersService_GetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUsersRequest)
+	in := new(GetUserRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -241,7 +241,7 @@ func _UsersService_GetUser_Handler(srv interface{}, ctx context.Context, dec fun
 		FullMethod: "/homeit.UsersService/GetUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UsersServiceServer).GetUser(ctx, req.(*GetUsersRequest))
+		return srv.(UsersServiceServer).GetUser(ctx, req.(*GetUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
