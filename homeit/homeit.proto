@@ -43,16 +43,17 @@ message File {
 service UsersService {
   rpc CreateToken(users.TokenRequest) returns (users.Token) {}
   rpc Login(users.LoginRequest) returns (users.Session) {}
+  rpc AuthUser(AuthUserRequest) returns (AuthUserResponse) {}
 
   rpc GetUsers(Empty) returns (stream users.User) {}
-  rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
   rpc CreateUser(stream users.User) returns (stream users.User) {}
 }
 
-message GetUserRequest {
+message AuthUserRequest {
   string uid = 1;
+  string email = 2;
 }
-message GetUserResponse {
+message AuthUserResponse {
   users.User user = 1;
 }
 
