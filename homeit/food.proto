@@ -9,89 +9,93 @@ option java_package = "io.grpc.homeit.proto";
 
 
 message SupplyId {
-  string supplyId = 1;
-  string userId = 2;
+    string supplyId = 1;
+    string userId = 2;
 }
 
 message Supply {
-  string id = 1;
-  string created = 2;
-  string updated = 3;
-  bool deleted = 4;
+    string id = 1;
+    string created = 2;
+    string updated = 3;
+    bool deleted = 4;
 
-  string userId = 5;
+    string userId = 5;
 
-  string name = 6;
-  string category = 7;
-  int32 amount = 8;
-  int32 priority = 9;
+    string name = 6;
+    string category = 7;
+    int32 amount = 8;
+    int32 priority = 9;
 }
 
 message MenuId {
-  string menuId = 1;
-  string userId = 2;
+    string menuId = 1;
+    string userId = 2;
 }
 
 message Menu {
-  string id = 1;
-  string created = 2;
-  string updated = 3;
-  optional string deleted = 4;
+    string id = 1;
+    string created = 2;
+    string updated = 3;
+    optional string deleted = 4;
 
-  string userId = 5;
-  string recipeId = 6;
+    string userId = 5;
+    string recipeId = 6;
 
-  string date = 7;
-  string type = 8;
+    string date = 7;
+    string type = 8;
 
-  Recipe recipe = 9;
+    Recipe recipe = 9;
 }
 
 message RecipeId {
-  string recipeId = 1;
-  string userId = 2;
+    string recipeId = 1;
+    string userId = 2;
 }
 
 message Recipe {
-  string id = 1;
-  string created = 2;
-  string updated = 3;
-  optional string deleted = 4;
+    string id = 1;
+    string created = 2;
+    string updated = 3;
+    optional string deleted = 4;
 
-  string userId = 5;
+    string userId = 5;
 
-  string name = 6;
-  string description = 7;
-  string category = 8;
+    string name = 6;
+    string description = 7;
+    string category = 8;
 
-  repeated Ingredient ingredients = 9;
+    repeated Ingredient ingredients = 9;
 }
 
 message IngredientId {
-  string ingredientId = 1;
-  string userId = 2;
+    string ingredientId = 1;
+    string userId = 2;
 }
 
 message Ingredient {
-  string id = 1;
-  string created = 2;
-  string updated = 3;
-  optional string deleted = 4;
+    string id = 1;
+    string created = 2;
+    string updated = 3;
+    optional string deleted = 4;
 
-  string userId = 5;
-  string recipeId = 6;
-  string globalIngredientId = 7;
+    string userId = 5;
+    string recipeId = 6;
+    string globalIngredientId = 7;
 
-  double amount = 8;
+    double amount = 8;
 }
 
+message GlobalIngredientId {
+    string globalIngredientId = 1;
+    string userId = 2;
+}
 message GlobalIngredient {
-  string id = 1;
-  string created = 2;
-  string updated = 3;
-  optional string deleted = 4;
+    string id = 1;
+    string created = 2;
+    string updated = 3;
+    optional string deleted = 4;
 
-  string userId = 5;
+    string userId = 5;
 
-  string name = 6;
+    string name = 6;
 }

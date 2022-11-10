@@ -958,6 +958,9 @@ type FoodServiceClient interface {
 	GetIngredients(ctx context.Context, in *UserId, opts ...grpc.CallOption) (FoodService_GetIngredientsClient, error)
 	CreateIngredient(ctx context.Context, in *Ingredient, opts ...grpc.CallOption) (*Ingredient, error)
 	DeleteIngredient(ctx context.Context, in *IngredientId, opts ...grpc.CallOption) (*Ingredient, error)
+	GetGlobalIngredients(ctx context.Context, in *UserId, opts ...grpc.CallOption) (FoodService_GetGlobalIngredientsClient, error)
+	CreateGlobalIngredient(ctx context.Context, in *GlobalIngredient, opts ...grpc.CallOption) (*GlobalIngredient, error)
+	DeleteGlobalIngredient(ctx context.Context, in *GlobalIngredientId, opts ...grpc.CallOption) (*GlobalIngredient, error)
 }
 
 type foodServiceClient struct {
@@ -1177,6 +1180,56 @@ func (c *foodServiceClient) DeleteIngredient(ctx context.Context, in *Ingredient
 	return out, nil
 }
 
+func (c *foodServiceClient) GetGlobalIngredients(ctx context.Context, in *UserId, opts ...grpc.CallOption) (FoodService_GetGlobalIngredientsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &FoodService_ServiceDesc.Streams[4], "/homeit.FoodService/GetGlobalIngredients", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &foodServiceGetGlobalIngredientsClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type FoodService_GetGlobalIngredientsClient interface {
+	Recv() (*GlobalIngredient, error)
+	grpc.ClientStream
+}
+
+type foodServiceGetGlobalIngredientsClient struct {
+	grpc.ClientStream
+}
+
+func (x *foodServiceGetGlobalIngredientsClient) Recv() (*GlobalIngredient, error) {
+	m := new(GlobalIngredient)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *foodServiceClient) CreateGlobalIngredient(ctx context.Context, in *GlobalIngredient, opts ...grpc.CallOption) (*GlobalIngredient, error) {
+	out := new(GlobalIngredient)
+	err := c.cc.Invoke(ctx, "/homeit.FoodService/CreateGlobalIngredient", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *foodServiceClient) DeleteGlobalIngredient(ctx context.Context, in *GlobalIngredientId, opts ...grpc.CallOption) (*GlobalIngredient, error) {
+	out := new(GlobalIngredient)
+	err := c.cc.Invoke(ctx, "/homeit.FoodService/DeleteGlobalIngredient", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FoodServiceServer is the server API for FoodService service.
 // All implementations must embed UnimplementedFoodServiceServer
 // for forward compatibility
@@ -1194,6 +1247,9 @@ type FoodServiceServer interface {
 	GetIngredients(*UserId, FoodService_GetIngredientsServer) error
 	CreateIngredient(context.Context, *Ingredient) (*Ingredient, error)
 	DeleteIngredient(context.Context, *IngredientId) (*Ingredient, error)
+	GetGlobalIngredients(*UserId, FoodService_GetGlobalIngredientsServer) error
+	CreateGlobalIngredient(context.Context, *GlobalIngredient) (*GlobalIngredient, error)
+	DeleteGlobalIngredient(context.Context, *GlobalIngredientId) (*GlobalIngredient, error)
 	mustEmbedUnimplementedFoodServiceServer()
 }
 
@@ -1239,6 +1295,15 @@ func (UnimplementedFoodServiceServer) CreateIngredient(context.Context, *Ingredi
 }
 func (UnimplementedFoodServiceServer) DeleteIngredient(context.Context, *IngredientId) (*Ingredient, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteIngredient not implemented")
+}
+func (UnimplementedFoodServiceServer) GetGlobalIngredients(*UserId, FoodService_GetGlobalIngredientsServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetGlobalIngredients not implemented")
+}
+func (UnimplementedFoodServiceServer) CreateGlobalIngredient(context.Context, *GlobalIngredient) (*GlobalIngredient, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateGlobalIngredient not implemented")
+}
+func (UnimplementedFoodServiceServer) DeleteGlobalIngredient(context.Context, *GlobalIngredientId) (*GlobalIngredient, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteGlobalIngredient not implemented")
 }
 func (UnimplementedFoodServiceServer) mustEmbedUnimplementedFoodServiceServer() {}
 
@@ -1499,6 +1564,63 @@ func _FoodService_DeleteIngredient_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FoodService_GetGlobalIngredients_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(UserId)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(FoodServiceServer).GetGlobalIngredients(m, &foodServiceGetGlobalIngredientsServer{stream})
+}
+
+type FoodService_GetGlobalIngredientsServer interface {
+	Send(*GlobalIngredient) error
+	grpc.ServerStream
+}
+
+type foodServiceGetGlobalIngredientsServer struct {
+	grpc.ServerStream
+}
+
+func (x *foodServiceGetGlobalIngredientsServer) Send(m *GlobalIngredient) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _FoodService_CreateGlobalIngredient_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GlobalIngredient)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FoodServiceServer).CreateGlobalIngredient(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/homeit.FoodService/CreateGlobalIngredient",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FoodServiceServer).CreateGlobalIngredient(ctx, req.(*GlobalIngredient))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _FoodService_DeleteGlobalIngredient_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GlobalIngredientId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FoodServiceServer).DeleteGlobalIngredient(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/homeit.FoodService/DeleteGlobalIngredient",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FoodServiceServer).DeleteGlobalIngredient(ctx, req.(*GlobalIngredientId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FoodService_ServiceDesc is the grpc.ServiceDesc for FoodService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1542,6 +1664,14 @@ var FoodService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "DeleteIngredient",
 			Handler:    _FoodService_DeleteIngredient_Handler,
 		},
+		{
+			MethodName: "CreateGlobalIngredient",
+			Handler:    _FoodService_CreateGlobalIngredient_Handler,
+		},
+		{
+			MethodName: "DeleteGlobalIngredient",
+			Handler:    _FoodService_DeleteGlobalIngredient_Handler,
+		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
@@ -1562,6 +1692,11 @@ var FoodService_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "GetIngredients",
 			Handler:       _FoodService_GetIngredients_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "GetGlobalIngredients",
+			Handler:       _FoodService_GetGlobalIngredients_Handler,
 			ServerStreams: true,
 		},
 	},
