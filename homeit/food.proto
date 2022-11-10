@@ -80,7 +80,18 @@ message Ingredient {
 
   string userId = 5;
   string recipeId = 6;
+  string globalIngredientId = 7;
 
-  string name = 7;
   double amount = 8;
+}
+
+message GlobalIngredient {
+  string id = 1;
+  string created = 2;
+  string updated = 3;
+  optional string deleted = 4;
+
+  string userId = 5;
+
+  string name = 6;
 }

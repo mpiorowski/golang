@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"log"
 	"os"
 	"time"
@@ -36,3 +38,13 @@ func MustGetenv(k string) string {
 	}
 	return v
 }
+
+func GenerateSecureCode(length int) (string, error) {
+	b := make([]byte, length)
+	_, err := rand.Read(b)
+	if err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(b), nil
+}
+
