@@ -83,6 +83,8 @@ message Ingredient {
     string globalIngredientId = 7;
 
     double amount = 8;
+
+    GlobalIngredient globalIngredient = 9;
 }
 
 message GlobalIngredientId {
