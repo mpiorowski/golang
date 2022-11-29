@@ -8,7 +8,6 @@ import (
 	"log"
 	"time"
 
-	"github.com/go-redis/redis/v9"
 	"google.golang.org/api/idtoken"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -17,48 +16,16 @@ import (
 	grpcMetadata "google.golang.org/grpc/metadata"
 )
 
-func CreateContext(env string, host string, redisHost string, redisPass string) (context.Context, context.CancelFunc, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	if env != "production" {
-		return ctx, cancel, nil
-	}
-	var token string
-	// Check if token is in cache
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     redisHost,
-		Password: redisPass,
-		DB:       0, // use default DB
-	})
-
-	token, err := rdb.Get(ctx, host).Result()
-
-	if err != nil {
-		// Create an identity token.
-		// With a global TokenSource tokens would be reused and auto-refreshed at need.
-		// A given TokenSource is specific to the audience.
-		tokenSource, err := idtoken.NewTokenSource(ctx, "https://"+host)
-		if err != nil {
-			log.Printf("idtoken.NewTokenSource: %v", err)
-			return ctx, cancel, err
-		}
-		tokenStruct, err := tokenSource.Token()
-		if err != nil {
-			log.Printf("tokenSource.Token: %v", err)
-			return ctx, cancel, err
-		}
-		token = tokenStruct.AccessToken
-		// Cache token
-		rdb.Set(ctx, host, token, time.Hour)
-	}
-
-	// Add token to gRPC Request.
-	ctx = grpcMetadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+token)
-	return ctx, cancel, nil
+type Cache struct {
+    token string
+    expiry time.Time
 }
 
-func Connect(env string, host string, redisHost string, redisPass string) (*grpc.ClientConn, error, context.Context, context.CancelFunc) {
+var cacheByHost = map[string]Cache{}
+
+func Connect(env string, host string) (*grpc.ClientConn, error, context.Context, context.CancelFunc) {
 	// Create a context with a timeout that will be used to dial the server.
-	ctx, cancel, err := CreateContext(env, host, redisHost, redisPass)
+	ctx, cancel, err := CreateContext(env, host)
 	if err != nil {
 		return nil, err, ctx, cancel
 	}
@@ -97,4 +64,53 @@ func Connect(env string, host string, redisHost string, redisPass string) (*grpc
 		return nil, err, ctx, cancel
 	}
 	return conn, nil, ctx, cancel
+}
+
+func CreateContext(env string, host string) (context.Context, context.CancelFunc, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	if env != "production" {
+		return ctx, cancel, nil
+	}
+	// Check if token is in cache
+	// rdb := redis.NewClient(&redis.Options{
+	// 	Addr:     redisHost,
+	// 	Password: redisPass,
+	// 	DB:       0, // use default DB
+	// })
+
+	// token, err := rdb.Get(ctx, host).Result()
+
+    token := cacheByHost[host].token
+    expiry := cacheByHost[host].expiry
+
+    if token != "" && expiry.After(time.Now()) {
+        log.Printf("Token found in cache")
+    }
+
+	if token == "" || time.Now().After(expiry) {
+		// Create an identity token.
+		// With a global TokenSource tokens would be reused and auto-refreshed at need.
+		// A given TokenSource is specific to the audience.
+		tokenSource, err := idtoken.NewTokenSource(ctx, "https://"+host)
+		if err != nil {
+			log.Printf("idtoken.NewTokenSource: %v", err)
+			return ctx, cancel, err
+		}
+		tokenStruct, err := tokenSource.Token()
+		if err != nil {
+			log.Printf("tokenSource.Token: %v", err)
+			return ctx, cancel, err
+		}
+		token = tokenStruct.AccessToken
+		// Cache token
+		// rdb.Set(ctx, host, token, time.Hour)
+        cacheByHost[host] = Cache{
+            token: token,
+            expiry: time.Now().Add(time.Hour),
+        }
+	}
+
+	// Add token to gRPC Request.
+	ctx = grpcMetadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+token)
+	return ctx, cancel, nil
 }
