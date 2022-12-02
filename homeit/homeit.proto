@@ -64,11 +64,11 @@ service FilesService {
 }
 
 service BillService {
-    rpc GetBills(GetBillsRequest) returns (stream bills.Bill) {}
+    rpc GetBills(UserId) returns (stream bills.Bill) {}
     rpc CreateBill(bills.Bill) returns (bills.Bill) {}
     rpc DeleteBill(bills.BillId) returns (bills.Bill) {}
 
-    rpc GetPayments(UserId) returns (stream bills.Payment) {}
+    rpc GetPayments(GetPaymentsRequest) returns (stream bills.Payment) {}
     rpc GetBillPayments(bills.BillId) returns (stream bills.Payment) {}
     rpc CreatePayment(bills.Payment) returns (bills.Payment) {}
     rpc DeletePayment(bills.PaymentId) returns (bills.Payment) {}
@@ -76,7 +76,7 @@ service BillService {
     rpc GetSavings(UserId) returns (stream bills.Saving) {}
 }
 
-message GetBillsRequest {
+message GetPaymentsRequest {
     string userId = 1;
     string dateFrom = 2;
     string dateTo = 3;
