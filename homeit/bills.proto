@@ -51,7 +51,7 @@ message Bill {
   optional string defaultAccountReciever = 13;
   optional string defaultAccountDescription = 14;
 
-  optional bool isPayed = 15;
+  optional float lastPayment = 15;
 }
 
 message Payment {
