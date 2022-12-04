@@ -100,4 +100,5 @@ message GlobalIngredient {
     string userId = 5;
 
     string name = 6;
+    string category = 7;
 }
