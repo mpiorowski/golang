@@ -952,6 +952,7 @@ type FoodServiceClient interface {
 	CreateMenu(ctx context.Context, in *Menu, opts ...grpc.CallOption) (*Menu, error)
 	CopyMenu(ctx context.Context, in *CopyMenuRequest, opts ...grpc.CallOption) (*CopyMenuResponse, error)
 	DeleteMenu(ctx context.Context, in *MenuId, opts ...grpc.CallOption) (*Menu, error)
+	GetShoppingList(ctx context.Context, in *ShoppingListRequest, opts ...grpc.CallOption) (FoodService_GetShoppingListClient, error)
 	GetRecipes(ctx context.Context, in *UserId, opts ...grpc.CallOption) (FoodService_GetRecipesClient, error)
 	CreateRecipe(ctx context.Context, in *Recipe, opts ...grpc.CallOption) (*Recipe, error)
 	DeleteRecipe(ctx context.Context, in *RecipeId, opts ...grpc.CallOption) (*Recipe, error)
@@ -1080,8 +1081,40 @@ func (c *foodServiceClient) DeleteMenu(ctx context.Context, in *MenuId, opts ...
 	return out, nil
 }
 
+func (c *foodServiceClient) GetShoppingList(ctx context.Context, in *ShoppingListRequest, opts ...grpc.CallOption) (FoodService_GetShoppingListClient, error) {
+	stream, err := c.cc.NewStream(ctx, &FoodService_ServiceDesc.Streams[2], "/homeit.FoodService/GetShoppingList", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &foodServiceGetShoppingListClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type FoodService_GetShoppingListClient interface {
+	Recv() (*Ingredient, error)
+	grpc.ClientStream
+}
+
+type foodServiceGetShoppingListClient struct {
+	grpc.ClientStream
+}
+
+func (x *foodServiceGetShoppingListClient) Recv() (*Ingredient, error) {
+	m := new(Ingredient)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func (c *foodServiceClient) GetRecipes(ctx context.Context, in *UserId, opts ...grpc.CallOption) (FoodService_GetRecipesClient, error) {
-	stream, err := c.cc.NewStream(ctx, &FoodService_ServiceDesc.Streams[2], "/homeit.FoodService/GetRecipes", opts...)
+	stream, err := c.cc.NewStream(ctx, &FoodService_ServiceDesc.Streams[3], "/homeit.FoodService/GetRecipes", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1131,7 +1164,7 @@ func (c *foodServiceClient) DeleteRecipe(ctx context.Context, in *RecipeId, opts
 }
 
 func (c *foodServiceClient) GetIngredients(ctx context.Context, in *UserId, opts ...grpc.CallOption) (FoodService_GetIngredientsClient, error) {
-	stream, err := c.cc.NewStream(ctx, &FoodService_ServiceDesc.Streams[3], "/homeit.FoodService/GetIngredients", opts...)
+	stream, err := c.cc.NewStream(ctx, &FoodService_ServiceDesc.Streams[4], "/homeit.FoodService/GetIngredients", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1181,7 +1214,7 @@ func (c *foodServiceClient) DeleteIngredient(ctx context.Context, in *Ingredient
 }
 
 func (c *foodServiceClient) GetGlobalIngredients(ctx context.Context, in *UserId, opts ...grpc.CallOption) (FoodService_GetGlobalIngredientsClient, error) {
-	stream, err := c.cc.NewStream(ctx, &FoodService_ServiceDesc.Streams[4], "/homeit.FoodService/GetGlobalIngredients", opts...)
+	stream, err := c.cc.NewStream(ctx, &FoodService_ServiceDesc.Streams[5], "/homeit.FoodService/GetGlobalIngredients", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1241,6 +1274,7 @@ type FoodServiceServer interface {
 	CreateMenu(context.Context, *Menu) (*Menu, error)
 	CopyMenu(context.Context, *CopyMenuRequest) (*CopyMenuResponse, error)
 	DeleteMenu(context.Context, *MenuId) (*Menu, error)
+	GetShoppingList(*ShoppingListRequest, FoodService_GetShoppingListServer) error
 	GetRecipes(*UserId, FoodService_GetRecipesServer) error
 	CreateRecipe(context.Context, *Recipe) (*Recipe, error)
 	DeleteRecipe(context.Context, *RecipeId) (*Recipe, error)
@@ -1277,6 +1311,9 @@ func (UnimplementedFoodServiceServer) CopyMenu(context.Context, *CopyMenuRequest
 }
 func (UnimplementedFoodServiceServer) DeleteMenu(context.Context, *MenuId) (*Menu, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteMenu not implemented")
+}
+func (UnimplementedFoodServiceServer) GetShoppingList(*ShoppingListRequest, FoodService_GetShoppingListServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetShoppingList not implemented")
 }
 func (UnimplementedFoodServiceServer) GetRecipes(*UserId, FoodService_GetRecipesServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetRecipes not implemented")
@@ -1448,6 +1485,27 @@ func _FoodService_DeleteMenu_Handler(srv interface{}, ctx context.Context, dec f
 		return srv.(FoodServiceServer).DeleteMenu(ctx, req.(*MenuId))
 	}
 	return interceptor(ctx, in, info, handler)
+}
+
+func _FoodService_GetShoppingList_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(ShoppingListRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(FoodServiceServer).GetShoppingList(m, &foodServiceGetShoppingListServer{stream})
+}
+
+type FoodService_GetShoppingListServer interface {
+	Send(*Ingredient) error
+	grpc.ServerStream
+}
+
+type foodServiceGetShoppingListServer struct {
+	grpc.ServerStream
+}
+
+func (x *foodServiceGetShoppingListServer) Send(m *Ingredient) error {
+	return x.ServerStream.SendMsg(m)
 }
 
 func _FoodService_GetRecipes_Handler(srv interface{}, stream grpc.ServerStream) error {
@@ -1682,6 +1740,11 @@ var FoodService_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "GetMenus",
 			Handler:       _FoodService_GetMenus_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "GetShoppingList",
+			Handler:       _FoodService_GetShoppingList_Handler,
 			ServerStreams: true,
 		},
 		{
