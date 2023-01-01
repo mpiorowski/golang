@@ -71,23 +71,12 @@ func CreateContext(env string, host string) (context.Context, context.CancelFunc
 	if env != "production" {
 		return ctx, cancel, nil
 	}
-	// Check if token is in cache
-	// rdb := redis.NewClient(&redis.Options{
-	// 	Addr:     redisHost,
-	// 	Password: redisPass,
-	// 	DB:       0, // use default DB
-	// })
-
-	// token, err := rdb.Get(ctx, host).Result()
 
     token := cacheByHost[host].token
     expiry := cacheByHost[host].expiry
 
-    if token != "" && expiry.After(time.Now()) {
-        log.Printf("Token found in cache")
-    }
-
 	if token == "" || time.Now().After(expiry) {
+        log.Printf("Token not found in cache or expired")
 		// Create an identity token.
 		// With a global TokenSource tokens would be reused and auto-refreshed at need.
 		// A given TokenSource is specific to the audience.
@@ -103,12 +92,13 @@ func CreateContext(env string, host string) (context.Context, context.CancelFunc
 		}
 		token = tokenStruct.AccessToken
 		// Cache token
-		// rdb.Set(ctx, host, token, time.Hour)
         cacheByHost[host] = Cache{
             token: token,
             expiry: time.Now().Add(time.Hour),
         }
-	}
+	} else {
+        log.Printf("Token found in cache")
+    }
 
 	// Add token to gRPC Request.
 	ctx = grpcMetadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+token)
