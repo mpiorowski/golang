@@ -67,7 +67,7 @@ func Connect(env string, host string) (*grpc.ClientConn, error, context.Context,
 }
 
 func CreateContext(env string, host string) (context.Context, context.CancelFunc, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	if env != "production" {
 		return ctx, cancel, nil
 	}
